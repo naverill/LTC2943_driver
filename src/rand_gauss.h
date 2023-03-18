@@ -17,7 +17,7 @@ double rand_gauss(double mu, double sigma)
 }
 
 
-double rand_gauss_range(double min, double max){
-    double x = rand_gauss(0., 1.);
+double rand_gauss_range(double min, double max, double sigma){
+    double x = rand_gauss(0., sigma);
     return -min + x * (max - min);
 }  
