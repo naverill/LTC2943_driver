@@ -19,10 +19,9 @@
  **/
 
 #include <math.h>
-#include <stdlib.h>
-#include "LTC2943_sim.h"
+#include "ltc2943_sim.h"
 #include "rand_gauss.h"
-#include "LTC2943_config.h"
+#include "ltc2943_config.h"
 
 static LTC2943_Status status();
 static LTC2943_Config config();
@@ -42,15 +41,21 @@ static void LTC2943_Reset() {
 
 
 bool LTC2943_Initialise(){
+    /** Simulate battery gauge:
+     *      1. Powering-on reset signal
+     *      2. Setting all registers to default state
+     *      3. Enabling alert mode
+     */
   LTC2943_Reset();
-  // Power-on reset signal
-  // all registers to default state
-  // alert mode enabled
   return 0;
 }
 
 bool LTC2943_Read(uint8_t address, uint8_t *dest, uint8_t dataSize){
-   return 0;
+    /** Simulate battery gauge
+     *
+     */
+    bool success = false;
+    return success;
 }
 
 bool LTC2973_Write(uint8_t address, uint8_t *src, uint8_t dataSize){

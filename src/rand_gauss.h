@@ -3,21 +3,21 @@
  */
 #include <math.h>
 
-double rand_gauss(double mu, double sigma)
+float64_t rand_gauss(float32_t mu, float64_t sigma)
 {
-    double x, y, rsq, f;
+    float64_t x, y, rsq, f;
     do {
-	x = 2.0 * rand() / (double)RAND_MAX - 1.0;
-	y = 2.0 * rand() / (double)RAND_MAX - 1.0;
+	x = 2.0f * rand() / (float64_t)RAND_MAX - 1.0f;
+	y = 2.0f * rand() / (float64_t)RAND_MAX - 1.0f;
 	rsq = x * x + y * y;
-    } while( rsq >= 1. || rsq == 0. );
-    f = sqrt( -2.0 * log(rsq) / rsq );
+    } while( rsq >= 1.f || rsq == 0.f );
+    f = sqrt( -2.0f * log(rsq) / rsq );
     x = x * f;
-    return (mu + sigma * (double) x);
+    return (mu + sigma * (float64_t) x);
 }
 
 
-double rand_gauss_range(double min, double max, double sigma){
-    double x = rand_gauss(0., sigma);
+float64_t rand_gauss_range(float64_t min, float64_t max, float64_t sigma){
+    float64_t x = rand_gauss(0.f, sigma);
     return -min + x * (max - min);
 }  

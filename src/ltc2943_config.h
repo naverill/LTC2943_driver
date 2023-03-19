@@ -1,10 +1,9 @@
-#include <stdio.h>
 #include <linux/bitops.h>
 
 
 const uint_8 LTC2942_I2C_ADDR = BIT(6) | BIT(5) | BIT(2);
 
-enum LTC2943_Pins{
+enum LTC2943_Pins_t {
     SENSEP  = 0x01, // Sense+ Positive current Sense Input
     GND1    = 0x02, // Device Ground 1
     GND     = 0x03, // Device Ground 2
@@ -16,7 +15,7 @@ enum LTC2943_Pins{
     EPAD    = 0x09  // Exposed Pad
 }
 
-enum LTC2943_ADCMode {
+enum LTC2943_ADCMode_t {
     AUTO    = BIT(1) || BIT(0),  // continuously performing voltage, current and 
                                  // temperature conversions
     SCAN    = BIT(1),   // voltage, current and temperature conversion measurements 
@@ -26,7 +25,14 @@ enum LTC2943_ADCMode {
     SLEEP   = 0
 }
 
-enum LTC2943_PrescalerM {
+enum LTC2943_Measurement_t {
+    CURRENT, 
+    CHARGE, 
+    VOLTAGE,
+    TEMPERATURE, 
+}
+
+enum LTC2943_PrescalerM_t {
     _1      = 0,
     _4      = BIT(0),
     _16     = BIT(1),
@@ -37,7 +43,7 @@ enum LTC2943_PrescalerM {
     _4096_   = BIT(3) | BIT(2) | BIT(1),
 }
 
-enum LTC2943_ALCCMode {
+enum LTC2943_ALCCMode_t {
     ALERT           = BIT(1), // Alert functionality enabled. Pin becomes logic output
     CHARGE_COMPLETE = BIT(0), // Pin becomes logic input and accepts charge complete 
                               // inverted signal to set accumulated charge register 
@@ -46,7 +52,8 @@ enum LTC2943_ALCCMode {
     NOT_ALLOWED     = BIT(1) | BIT(0),
 }
 
-enum LTC2943_RegAddr {
+
+enum LTC2943_RegAddr_t {
     STATUS                  = 0x00, // Status (R)
     CONTROL                 = 0x01, // Control (R/W)
     ACC_CHARGE_MSB          = 0x02, // Accumulated Charge MSB (R/W)
@@ -64,16 +71,43 @@ enum LTC2943_RegAddr {
     CURR_MSB                = 0x0E, // Current MSB (R)
     CURR_LSB                = 0x0F, // Current LSB (R)
     CURR_THR_HIGH_MSB       = 0x10, // Current Threshold High MSB (R/W) 
-    CURR_THR_HIGH_LSB       = 0x11, // Current Threshold High LSB  (R/)
+    CURR_THR_HIGH_LSB       = 0x11, // Current Threshold High LSB  (R/W)
     CURR_THR_LOW_MSB        = 0x12, // Current Threshold Low MSB (R/W) 
     CURR_THR_LOW_LSB        = 0x13, // Current Threshold Low LSB (R/W) 
     TEMP_MSB                = 0x14, // Temperature MSB (R) 
     TEMP_LSB                = 0x15, // Temperature MSB (R)
     TEMP_THR_HIGH           = 0x16, // Temperature Threshold High  (R/W) 
-    TEMP_THR_LOW            = 0x16, // Temperature Threshold Low (R/W) 
+    TEMP_THR_LOW            = 0x17, // Temperature Threshold Low (R/W) 
 }
 
-enum LTC2943_StatusReg {
+const bool LTC2932_REG_ADDR_WRITABLE[18] = {
+    0, //   STATUS              
+    1, //   CONTROL             
+    1, //   ACC_CHARGE_MSB      
+    1, //   ACC_CHARGE_LSB      
+    1, //   CHARGE_THR_HIGH_LSB 
+    1, //   CHARGE_THR_HIGH_MSB 
+    1, //   CHARGE_THR_LOW_LSB  
+    1, //   CHARGE_THR_LOW_MSB  
+    0, //   VOLTAGE_MSB         
+    0, //   VOLTAGE_LSB         
+    1, //   VOLTAGE_THR_HIGH_LSB
+    1, //   VOLTAGE_THR_HIGH_MSB
+    1, //   VOLTAGE_THR_LOW_LSB 
+    1, //   VOLTAGE_THR_LOW_MSB 
+    0, //   CURR_MSB            
+    0, //   CURR_LSB            
+    1, //   CURR_THR_HIGH_MSB   
+    1, //   CURR_THR_HIGH_LSB   
+    1, //   CURR_THR_LOW_MSB    
+    1, //   CURR_THR_LOW_LSB    
+    0, //   TEMP_MSB            
+    0, //   TEMP_LSB            
+    1, //   TEMP_THR_HIGH       
+    1, //   TEMP_THR_LOW        
+}
+
+enum LTC2943_StatusReg_t {
     UNDERVOLTAGE_LOCKOUT    = 0x00, // Indicates recovery from undervoltage
     VOLTAGE                 = 0x01, // Indicates one of the voltage limits was exceeded
     CHARGE_LOW              = 0x02, // Indicates that the ACR value exceeded the charge 
@@ -86,36 +120,47 @@ enum LTC2943_StatusReg {
     CURRENT_ALERT           = 0x06, // Indicates one of the current limits was exceeded 
 }
 
-struct LTC2943_Config {
-    const float SUPPLY_VOLTAGE_MIN = -0.3;
-    const float SUPPLY_VOLTAGE_MAX = 24.;
-    const float SCL_VOLTAGE_MIN = -0.3;
-    const float SCL_VOLTAGE_MAX = 6.;
-    const float OPERATING_TEMP_RANGE_C_MIN = 0.; 
-    const float OPERATING_TEMP_RANGE_C_MAX = 70.; 
-    const float OPERATING_TEMP_RANGE_I_MIN = -40.; 
-    const float OPERATING_TEMP_RANGE_I_MAX = 85.; 
-    const float SURVIVAL_TEMP_RANGE_MIN = -65.;
-    const float SURVIVAL_TEMP_RANGE_MAX = 150.;
-    const float SCL_CLOCK_FREQ = 900;
-    const float ADC_READ_WAIT = 100;
+enum LTC2943_AlertThreshold_t {
+    CHARGE_HIGH   = 0x00;
+    CHARGE_LOW    = 0x01; 
+    VOLTAGE_HIGH  = 0x02;
+    VOLTAGE_LOW   = 0x03; 
+    CURR_HIGH     = 0x04;
+    CURR_LOW      = 0x05; 
+    TEMP_HIGH     = 0x06;
+    TEMP_LOW      = 0x07; 
+}
+
+struct LTC2943_Config_t {
+    const float32_t SUPPLY_VOLTAGE_MIN = -0.3;
+    const float32_t SUPPLY_VOLTAGE_MAX = 24.;
+    const float32_t SCL_VOLTAGE_MIN = -0.3;
+    const float32_t SCL_VOLTAGE_MAX = 6.;
+    const float32_t OPERATING_TEMP_RANGE_C_MIN = 0.; 
+    const float32_t OPERATING_TEMP_RANGE_C_MAX = 70.; 
+    const float32_t OPERATING_TEMP_RANGE_I_MIN = -40.; 
+    const float32_t OPERATING_TEMP_RANGE_I_MAX = 85.; 
+    const float32_t SURVIVAL_TEMP_RANGE_MIN = -65.;
+    const float32_t SURVIVAL_TEMP_RANGE_MAX = 150.;
+    const uint32_t SCL_CLOCK_FREQ = 900;
+    const uint32_t ADC_READ_WAIT = 100;
     uint8_t ADC_MODE = LTC2943_ADCMode.SLEEP;
     uint8_t ALCC_MODE = LTC2943_ALCCMode.ALERT;
     uint8_t PRESCALER_M = LTC2943_PrescalerM._4096; 
 }
 
-struct LTC2943_AlertThreshold {
-    float CHARGE_HIGH   = 0xFFFF;
-    float CHARGE_LOW    = 0x0; 
-    float VOLTAGE_HIGH  = 0xFFFF;
-    float VOLTAGE_LOW   = 0x0; 
-    float CURR_HIGH     = 0xFFFF;
-    float CURR_LOW      = 0x0; 
-    float TEMP_HIGH     = 0xFFFF;
-    float TEMP_LOW      = 0x0; 
+struct LTC2943_AlertThresholdConfig_t {
+    float64_t CHARGE_HIGH   = 0xFFFF;
+    float64_t CHARGE_LOW    = 0x0; 
+    float64_t VOLTAGE_HIGH  = 0xFFFF;
+    float64_t VOLTAGE_LOW   = 0x0; 
+    float64_t CURR_HIGH     = 0xFFFF;
+    float64_t CURR_LOW      = 0x0; 
+    float64_t TEMP_HIGH     = 0xFFFF;
+    float64_t TEMP_LOW      = 0x0; 
 }
 
-struct LTC2943_Status {
+struct LTC2943_Status_t {
     bool UNDERVOLTAGE_LOCKOUT    = 1,
     bool VOLTAGE                 = 0,
     bool CHARGE_LOW              = 0,
