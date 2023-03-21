@@ -6,7 +6,7 @@
 #include "ltc2943_sim.c"
 
 
-static bool ChipControl_ReadRegister(LTC2943_RegAddr_t reg_addr, uint8_t *read_buff, uint8_t data_size){
+static bool ChipControl_ReadRegister(uint8_t reg_addr, uint8_t *read_buff, uint8_t data_size){
     /** Read in data from the battery gauge. 
      *
      * The LTC2943 uses a 14-bit ADC, so the data outputs are stored in a uint16_t 
@@ -14,7 +14,7 @@ static bool ChipControl_ReadRegister(LTC2943_RegAddr_t reg_addr, uint8_t *read_b
      *  
      */
     bool success = false;
-    if (LTC2932_Write(LTC2942_I2C_ADDR, &((uint8_t)reg_addr), 1) == 0){
+    if (LTC2932_Write(LTC2942_I2C_ADDR, &(reg_addr), 1) == 0){
         if (LTC2932_Read(LTC2942_I2C_ADDR, read_buff, data_size) == 0){
             success = true;
         }
@@ -22,7 +22,7 @@ static bool ChipControl_ReadRegister(LTC2943_RegAddr_t reg_addr, uint8_t *read_b
     return success;
 }
 
-static bool ChipControl_WriteRegister(LTC2943_RegAddr_t reg_addr, uint8_t *data_buff, uint8_t data_size){
+static bool ChipControl_WriteRegister(uint8_t reg_addr, uint8_t *data_buff, uint8_t data_size){
     /** Write data to the battery gauge. 
      *
      */
@@ -49,7 +49,7 @@ LTC2943_AdcMode_t ChipControl_GetAdcMode(){
     if (!success || !(*read_buff)){
         return NULL;
     }
-    return ChipControl_CtrlRegToAdcMode(*read_buff) 
+    return ChipControl_ReadAdcMode(*read_buff) 
 }
 
 bool ChipControl_SetAdcMode(LTC2943_ADCMode_t mode){
@@ -151,23 +151,30 @@ bool ChipControl_GetAlert(LTC2943_AlertStatus_t alert){
     return ChipControl_CheckAlert(*read_buff, alert) 
 }
 
-bool ChipControl_GetThreshold(LTC2943_AlertThreshold_t threshold){
+uint16_t ChipControl_GetThreshold(tLTC2943_ThrAddr_t threshold){
     /**
      *
      */
-    uint8_t *read_buff;
-    bool success = ChipControl_ReadRegister(STATUS, read_buff, 1); 
+    uint8_t read_buff[2];
+    bool success = ChipControl_ReadRegister(threshold, &read_buff, 1); 
     if (!success || !(*read_buff)){
         return NULL;
     }
-
+    uint16_t thr = 0;
+    thr = ChipControl_BuffToUint(&thr, read_buff)
+    return thr;
 }
 
-bool ChipControl_SetThreshold(LTC2943_AlertThreshold_t threshold, float64_t value){
+bool ChipControl_SetThreshold(LTC2943_AlertThreshold_t threshold, uint16_t value){
     /**
      *
      */
 
+    uint8_t size = sizeof(uint16_t)
+    uint8_t write_buff[size];
+    ChipControl_UintToBuff(&value, &write_buff);
+    bool success = ChipControl_WriteRegister(threshold, &write_buff, size); 
+    return true;
 }
 
 float64_t ChipControl_GetMeasurement(LTC2943_Measurement_t meas){
@@ -179,9 +186,17 @@ float64_t ChipControl_GetMeasurement(LTC2943_Measurement_t meas){
 
 static void ChipControl_UintToBuff(void *data, uint8_t *write_buff){
     uint8_t i;
-    uint8_t size = sizeof(data)
+    uint8_t size = sizeof(data);
     for (i = 0; i < size; i++){
-        write_buff[i] = (*data >> 8 * (size - i + 1);
+        write_buff[i] = (*data >> (8 * (size - i - 1));
+    }
+}
+
+static void ChipControl_BuffToUint(void *data, uint8_t *read_buff){
+    uint8_t i;
+    uint8_t size = sizeof(read_buff);
+    for (i = 0; i < size; i++){
+        data |= (*read_buff[i]  << (8 * (size - i - 1));
     }
 }
 
