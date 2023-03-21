@@ -19,25 +19,50 @@
  **/
 
 #include <math.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include "ltc2943_sim.h"
 #include "rand_gauss.h"
 #include "ltc2943_config.h"
 
-static LTC2943_Status status();
-static LTC2943_Config config();
-static LTC2943_AlertThreshold alert_thr();
+static struct LTC2943_Status_t status = {
+    1,  // UNDERVOLTAGE_LOCKOUT 
+    0,  // VOLTAGE  
+    0,  // CHARGE_LOW 
+    0,  // CHARGE_HIGH 
+    0,  // TEMP 
+    0,  // ACC_CHARGE 
+    0   // CURRENT_ALERT 
+};
 
+static struct LTC2943_Config_t config = {
+    -0.3,   // SUPPLY_VOLTAGE_MIN 
+    24.,    // SUPPLY_VOLTAGE_MAX 
+    -0.3,   // SCL_VOLTAGE_MIN 
+    6.,     // SCL_VOLTAGE_MAX 
+    0.,     // OPERATING_TEMP_RANGE_C_MIN  
+    70.,    // OPERATING_TEMP_RANGE_C_MAX  
+    -40.,   // OPERATING_TEMP_RANGE_I_MIN  
+    85.,    // OPERATING_TEMP_RANGE_I_MAX 
+    -65.,   // SURVIVAL_TEMP_RANGE_MIN 
+    150.,   // SURVIVAL_TEMP_RANGE_MAX 
+    900,    // SCL_CLOCK_FREQ 
+    100,    // ADC_READ_WAIT 
+    SLEEP,  // ADC_MODE 
+    ALERT,  // ALCC_MODE 
+    _4096,  // PRESCALER_M  
+};
 
-/**
- * Reset battery gauge to default configuration
- */
-static void LTC2943_Reset() {
-    status = {1, 0, 0, 0, 0, 0};
-    config.ADC_MODE = LTC2943_ADCMode.SLEEP;
-    config.ALCC_MODE = LTC2943_ALCCMode.ALERT;
-    config.PRESCALER_M = LTC2943_PrescalerM._4096; 
-    alert_thr = {0xFFFF, 0x0, 0xFFFF, 0x0, 0xFFFF, 0x0, 0xFFFF, 0x0}
-}
+static struct LTC2943_AlertThresholdConfig_t alert_thr = {
+    0xFFFF, // CHARGE_HIGH
+    0x0,      // CHARGE_LOW
+    0xFFFF, // VOLTAGE_HIGH  
+    0x0,      // VOLTAGE_LOW
+    0xFFFF,   // CURR_HIGH
+    0x0,      // CURR_LOW
+    0xFFFF,   // TEMP_HIGH
+    0x0,      // TEMP_LOW
+};
 
 
 bool LTC2943_Initialise(){
@@ -46,7 +71,6 @@ bool LTC2943_Initialise(){
      *      2. Setting all registers to default state
      *      3. Enabling alert mode
      */
-    LTC2943_Reset();
     return 0;
 }
 
@@ -58,7 +82,7 @@ bool LTC2943_Read(uint8_t address, uint8_t *dest, uint8_t dataSize){
     return success;
 }
 
-bool LTC2973_Write(uint8_t address, uint8_t *src, uint8_t dataSize){
+bool LTC2943_Write(uint8_t address, uint8_t *src, uint8_t dataSize){
     bool success = false;
     return success;
 }

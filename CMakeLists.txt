@@ -26,5 +26,16 @@ ENDIF()
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-register -Wno-ignored-attributes")
 
-# Set default ExternalProject root directory
-SET_DIRECTORY_PROPERTIES(PROPERTIES EP_PREFIX .)
+add_executable(main src/main.c)
+# add_dependencies(main ${LIBRARY_NAME})
+target_link_libraries(main PRIVATE ${LIBRARY_NAME})
+set_target_properties(
+    ${LIBRARY_NAME} main 
+      PROPERTIES
+        C_STANDARD 17
+        C_STANDARD_REQUIRED YES
+        C_EXTENSIONS NO
+)
+ENABLE_TESTING()
+
+ADD_SUBDIRECTORY(test EXCLUDE_FROM_ALL)

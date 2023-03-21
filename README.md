@@ -2,7 +2,29 @@
 This package contains a C implementation for a LTC2943 chip driver. This module can be use to access, monitor and configure the multicell battery gas gauge. 
 
 # Dependencies
-The module is tested and configured on Ubuntu 22.04.  
+The module is tested and configured on:
+
+* C++17
+* CMake > 3.14
+* Ubuntu 22.04
+
+# Build Dependencies
+Install Linux dependencies
+```
+sudo apt install build-essential libssl-dev g++
+```
+
+# Build
+Build by making a build directory (i.e. build/), run cmake in that dir, and then use 
+make to build the desired target.
+
+```
+> mkdir build && cd build
+> cmake .. -DCMAKE_BUILD_TYPE=[Debug | Coverage | Release]
+> make
+> ./main # Run simulator
+> ./test # Run unit tests 
+```
 
 # Device APIs
 The device provides a number of C APIs that can be used to access measurements:

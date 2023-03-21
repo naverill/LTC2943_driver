@@ -1,22 +1,18 @@
-#include <linux/bitops.h>
+#ifndef LCT2943_CONFIG_H
+#define LCT2943_CONFIG_H
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <stddef.h>
 
-const uint_8 LTC2942_I2C_ADDR = BIT(6) | BIT(5) | BIT(2);
+#define BIT(nr)	((uint8_t)(1) << (nr))
 
-enum LTC2943_Pins_t {
-    SENSEP  = 0x01, // Sense+ Positive current Sense Input
-    GND1    = 0x02, // Device Ground 1
-    GND     = 0x03, // Device Ground 2
-    SCL     = 0x04, // Serial Bus Clock Input
-    SDA     = 0x05, // Serial Bus Data Input and Output
-    ALCC    = 0x06, // Alert Output or Change Complete Input 
-    GND3    = 0x07, // Device Ground 3
-    SENSEN  = 0x08, // Negative Current Sense Input
-    EPAD    = 0x09  // Exposed Pad
-}
+const uint8_t LTC2943_I2C_ADDR = BIT(6) | BIT(5) | BIT(2);
+const float RSENSE = 50; // default for sense resistor (mΩ)
 
 typedef const uint8_t LTC2943_AdcMode_t;
-LTC2943_AdcMode_t AUTO    = BIT(1) || BIT(0);  // continuously performing voltage, current and 
+LTC2943_AdcMode_t AUTO    = BIT(1) | BIT(0);  // continuously performing voltage, current and 
                                                  // temperature conversions
 LTC2943_AdcMode_t SCAN    = BIT(1);   // voltage, current and temperature conversion measurements 
                     // are executed every 10 seconds.
@@ -44,34 +40,20 @@ LTC2943_AlccMode_t NOT_ALLOWED     = BIT(1) | BIT(0);
 
 
 typedef const uint8_t LTC2943_RegAddr_t; 
-LTC2943_RegAddr_t STATUS                  = 0x00; // Status (R)
-LTC2943_RegAddr_t CONTROL                 = 0x01; // Control (R/W)
-
-typedef const uint8_t LTC2943_MeasAddr_t; 
-LTC2943_MeasAddr_t ACC_CHARGE_MSB          = 0x02; // Accumulated Charge MSB (R/W)
-LTC2943_MeasAddr_t ACC_CHARGE_LSB          = 0x03; // Accumulated Charge LSB (R/W)
-LTC2943_MeasAddr_t VOLTAGE_MSB             = 0x08; // Voltage MSB (R)
-LTC2943_MeasAddr_t VOLTAGE_LSB             = 0x09; // Voltage LSB (R)
-LTC2943_MeasAddr_t CURR_MSB                = 0x0E; // Current MSB (R)
-LTC2943_MeasAddr_t CURR_LSB                = 0x0F; // Current LSB (R)
-LTC2943_MeasAddr_t TEMP_MSB                = 0x14; // Temperature MSB (R) 
-LTC2943_MeasAddr_t TEMP_LSB                = 0x15; // Temperature MSB (R)
-
-typedef const uint8_t LTC2943_ThrAddr_t; 
-LTC2943_ThrAddr_t CHARGE_THR_HIGH_LSB     = 0x04; // Charge Threshold High MSB (R/W)
-LTC2943_ThrAddr_t CHARGE_THR_HIGH_MSB     = 0x05; // Charge Threshold High LSB (R/W)
-LTC2943_ThrAddr_t CHARGE_THR_LOW_LSB      = 0x06; // Charge Threshold Low MSB (R/W)
-LTC2943_ThrAddr_t CHARGE_THR_LOW_MSB      = 0x07; // Charge Threshold Low LSB (R/W)
-LTC2943_ThrAddr_t VOLTAGE_THR_HIGH_LSB    = 0x0A; // Voltage Threshold High MSB (R/W)
-LTC2943_ThrAddr_t VOLTAGE_THR_HIGH_MSB    = 0x0B; // Voltage Threshold High LSB (R/W)
-LTC2943_ThrAddr_t VOLTAGE_THR_LOW_LSB     = 0x0C; // Voltage Threshold Low MSB (R/W)
-LTC2943_ThrAddr_t VOLTAGE_THR_LOW_MSB     = 0x0D; // Voltage Threshold Low LSB (R/W)
-LTC2943_ThrAddr_t CURR_THR_HIGH_MSB       = 0x10; // Current Threshold High MSB (R/W) 
-LTC2943_ThrAddr_t CURR_THR_HIGH_LSB       = 0x11; // Current Threshold High LSB  (R/W)
-LTC2943_ThrAddr_t CURR_THR_LOW_MSB        = 0x12; // Current Threshold Low MSB (R/W) 
-LTC2943_ThrAddr_t CURR_THR_LOW_LSB        = 0x13; // Current Threshold Low LSB (R/W) 
-LTC2943_ThrAddr_t TEMP_THR_HIGH           = 0x16; // Temperature Threshold High  (R/W) 
-LTC2943_ThrAddr_t TEMP_THR_LOW            = 0x17; // Temperature Threshold Low (R/W) 
+LTC2943_RegAddr_t STATUS_ADDR             = 0x00; // A: Status
+LTC2943_RegAddr_t CONTROL_ADDR            = 0x01; // B: Control
+LTC2943_RegAddr_t CHARGE_ADDR             = 0x02; // C: Accumulated Charge  (mAh)
+LTC2943_RegAddr_t VOLTAGE_ADDR            = 0x08; // I: Voltage  (V)
+LTC2943_RegAddr_t CURR_ADDR               = 0x0E; // O: Current  (mV)
+LTC2943_RegAddr_t TEMP_ADDR               = 0x14; // U: Temperature  (K) 
+LTC2943_RegAddr_t CHARGE_THR_HIGH_ADDR    = 0x04; // E: Charge Threshold High  (mAh)
+LTC2943_RegAddr_t CHARGE_THR_LOW_ADDR     = 0x06; // G: Charge Threshold Low  (mAh)
+LTC2943_RegAddr_t VOLTAGE_THR_HIGH_ADDR   = 0x0A; // K: Voltage Threshold High  (V)
+LTC2943_RegAddr_t VOLTAGE_THR_LOW_ADDR    = 0x0C; // M: Voltage Threshold Low  (V)
+LTC2943_RegAddr_t CURR_THR_HIGH_ADDR      = 0x10; // Q: Current Threshold High   (mV) 
+LTC2943_RegAddr_t CURR_THR_LOW_ADDR       = 0x12; // S: Current Threshold Low  (mV) 
+LTC2943_RegAddr_t TEMP_THR_HIGH_ADDR      = 0x16; // W: Temperature Threshold High (K) 
+LTC2943_RegAddr_t TEMP_THR_LOW_ADDR       = 0x17; // W: Temperature Threshold Low(K) 
 
 typedef const uint8_t LTC2943_AlertStatus_t;
 LTC2943_AlertStatus_t UNDERVOLTAGE_LOCKOUT    = BIT(0); // Indicates recovery from undervoltage
@@ -87,69 +69,60 @@ LTC2943_AlertStatus_t ACC_CHARGE              = BIT(5); // Indicates that the va
 LTC2943_AlertStatus_t CURRENT_ALERT           = BIT(6); // Indicates one of the current limits was exceeded 
 
 
-const bool LTC2932_REG_ADDR_WRITABLE[18] = {
+const bool LTC2943_REG_ADDR_WRITABLE[18] = {
     0, //   STATUS              
     1, //   CONTROL             
-    1, //   ACC_CHARGE_MSB      
-    1, //   ACC_CHARGE_LSB      
-    1, //   CHARGE_THR_HIGH_LSB 
-    1, //   CHARGE_THR_HIGH_MSB 
-    1, //   CHARGE_THR_LOW_LSB  
-    1, //   CHARGE_THR_LOW_MSB  
-    0, //   VOLTAGE_MSB         
-    0, //   VOLTAGE_LSB         
-    1, //   VOLTAGE_THR_HIGH_LSB
-    1, //   VOLTAGE_THR_HIGH_MSB
-    1, //   VOLTAGE_THR_LOW_LSB 
-    1, //   VOLTAGE_THR_LOW_MSB 
-    0, //   CURR_MSB            
-    0, //   CURR_LSB            
-    1, //   CURR_THR_HIGH_MSB   
-    1, //   CURR_THR_HIGH_LSB   
-    1, //   CURR_THR_LOW_MSB    
-    1, //   CURR_THR_LOW_LSB    
-    0, //   TEMP_MSB            
-    0, //   TEMP_LSB            
+    1, //   CHARGE_      
+    1, //   CHARGE_THR_HIGH_ 
+    1, //   CHARGE_THR_LOW_  
+    0, //   VOLTAGE_         
+    1, //   VOLTAGE_THR_HIGH_
+    1, //   VOLTAGE_THR_LOW_ 
+    0, //   CURR_            
+    1, //   CURR_THR_HIGH_   
+    1, //   CURR_THR_LOW_    
+    0, //   TEMP_            
     1, //   TEMP_THR_HIGH       
     1, //   TEMP_THR_LOW        
-}
+};
 
 struct LTC2943_Config_t {
-    const float32_t SUPPLY_VOLTAGE_MIN = -0.3;
-    const float32_t SUPPLY_VOLTAGE_MAX = 24.;
-    const float32_t SCL_VOLTAGE_MIN = -0.3;
-    const float32_t SCL_VOLTAGE_MAX = 6.;
-    const float32_t OPERATING_TEMP_RANGE_C_MIN = 0.; 
-    const float32_t OPERATING_TEMP_RANGE_C_MAX = 70.; 
-    const float32_t OPERATING_TEMP_RANGE_I_MIN = -40.; 
-    const float32_t OPERATING_TEMP_RANGE_I_MAX = 85.; 
-    const float32_t SURVIVAL_TEMP_RANGE_MIN = -65.;
-    const float32_t SURVIVAL_TEMP_RANGE_MAX = 150.;
-    const uint32_t SCL_CLOCK_FREQ = 900;
-    const uint32_t ADC_READ_WAIT = 100;
-    uint8_t ADC_MODE = SLEEP;
-    uint8_t ALCC_MODE = ALERT;
-    uint8_t PRESCALER_M = _4096; 
-}
+    float SUPPLY_VOLTAGE_MIN;
+    float SUPPLY_VOLTAGE_MAX;
+    float SCL_VOLTAGE_MIN;
+    float SCL_VOLTAGE_MAX;
+    float OPERATING_TEMP_RANGE_C_MIN; 
+    float OPERATING_TEMP_RANGE_C_MAX; 
+    float OPERATING_TEMP_RANGE_I_MIN; 
+    float OPERATING_TEMP_RANGE_I_MAX; 
+    float SURVIVAL_TEMP_RANGE_MIN;
+    float SURVIVAL_TEMP_RANGE_MAX;
+    uint32_t SCL_CLOCK_FREQ;
+    uint32_t ADC_READ_WAIT;
+    uint8_t ADC_MODE;
+    uint8_t ALCC_MODE;
+    uint8_t PRESCALER_M; 
+};
 
 struct LTC2943_AlertThresholdConfig_t {
-    float64_t CHARGE_HIGH   = 0xFFFF;
-    float64_t CHARGE_LOW    = 0x0; 
-    float64_t VOLTAGE_HIGH  = 0xFFFF;
-    float64_t VOLTAGE_LOW   = 0x0; 
-    float64_t CURR_HIGH     = 0xFFFF;
-    float64_t CURR_LOW      = 0x0; 
-    float64_t TEMP_HIGH     = 0xFFFF;
-    float64_t TEMP_LOW      = 0x0; 
-}
+    float CHARGE_HIGH;
+    float CHARGE_LOW; 
+    float VOLTAGE_HIGH;
+    float VOLTAGE_LOW; 
+    float CURR_HIGH;
+    float CURR_LOW; 
+    float TEMP_HIGH;
+    float TEMP_LOW; 
+};
 
 struct LTC2943_Status_t {
-    bool UNDERVOLTAGE_LOCKOUT    = 1,
-    bool VOLTAGE                 = 0,
-    bool CHARGE_LOW              = 0,
-    bool CHARGE_HIGH             = 0,
-    bool TEMP                    = 0,
-    bool ACC_CHARGE              = 0,
-    bool CURRENT_ALERT           = 0,
-}
+    bool UNDERVOLTAGE_LOCKOUT;
+    bool VOLTAGE;
+    bool CHARGE_LOW;
+    bool CHARGE_HIGH;
+    bool TEMP;
+    bool ACC_CHARGE;
+    bool CURRENT_ALERT;
+};
 
+#endif // LCT2943_CONFIG_H
