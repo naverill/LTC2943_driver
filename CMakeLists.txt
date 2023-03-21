@@ -28,7 +28,7 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-register -Wno-ignored-attrib
 
 add_executable(main src/main.c)
 # add_dependencies(main ${LIBRARY_NAME})
-target_link_libraries(main PRIVATE ${LIBRARY_NAME})
+target_link_libraries(main PRIVATE ${LIBRARY_NAME} m)
 set_target_properties(
     ${LIBRARY_NAME} main 
       PROPERTIES

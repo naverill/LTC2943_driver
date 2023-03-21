@@ -25,7 +25,7 @@
 #include "rand_gauss.h"
 #include "ltc2943_config.h"
 
-static struct LTC2943_Status_t status = {
+struct LTC2943_Status_t status = {
     1,  // UNDERVOLTAGE_LOCKOUT 
     0,  // VOLTAGE  
     0,  // CHARGE_LOW 
@@ -35,7 +35,7 @@ static struct LTC2943_Status_t status = {
     0   // CURRENT_ALERT 
 };
 
-static struct LTC2943_Config_t config = {
+struct LTC2943_Config_t config = {
     -0.3,   // SUPPLY_VOLTAGE_MIN 
     24.,    // SUPPLY_VOLTAGE_MAX 
     -0.3,   // SCL_VOLTAGE_MIN 
@@ -53,7 +53,7 @@ static struct LTC2943_Config_t config = {
     _4096,  // PRESCALER_M  
 };
 
-static struct LTC2943_AlertThresholdConfig_t alert_thr = {
+struct LTC2943_AlertThresholdConfig_t alert_thr = {
     0xFFFF, // CHARGE_HIGH
     0x0,      // CHARGE_LOW
     0xFFFF, // VOLTAGE_HIGH  

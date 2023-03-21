@@ -9,9 +9,9 @@
 
 LTC2943_AdcMode_t ChipControl_GetAdcMode();
 bool ChipControl_SetAdcMode(LTC2943_AdcMode_t mode);
-LTC2943_AlccMode_t uint8_t ChipControl_GetAlccMode();
+LTC2943_AlccMode_t ChipControl_GetAlccMode();
 bool ChipControl_SetAlccMode(LTC2943_AlccMode_t mode);
-LTC2943_PrescalerM_t uint8_t ChipControl_GetPrescalerM();
+LTC2943_PrescalerM_t ChipControl_GetPrescalerM();
 bool ChipControl_SetPrescalerM(LTC2943_PrescalerM_t nbit);
 
 /**
@@ -62,7 +62,7 @@ static bool ChipControl_ReadRegister(uint8_t reg_addr, uint8_t *read_buff, uint8
  *
  */
 static bool ChipControl_WriteRegister(uint8_t reg_addr, uint8_t *data_buff, uint8_t data_size);
-static bool ChipControl_SetRegister(LTC2943_ThrAddr_t threshold, uint16_t value);
+static bool ChipControl_SetRegister(LTC2943_RegAddr_t threshold, uint16_t value);
 
 /**
  *  Convert reading from registers (I, J, K, L, M) to voltage (mV), where
@@ -119,8 +119,8 @@ static float ChipControl_RegisterToCharge(uint16_t reg);
  *  (sourced from datasheet)
  */
 static uint16_t ChipControl_ChargeToRegister(float value);
-static uint8_t *ChipControl_UintToBuff(void *data, uint8_t *write_buff);
-static void ChipControl_BuffToUint(void *data, uint8_t *read_buff);
+static void ChipControl_UintToBuff(uint64_t *data, uint8_t *write_buff, uint8_t size);
+static void ChipControl_BuffToUint(uint64_t *data, uint8_t *read_buff, uint8_t size);
 
 /** Extract the current ADC mode from the control register
  *  This value is located in bits [7:6]
@@ -135,7 +135,7 @@ static LTC2943_AlccMode_t ChipControl_ReadAlccMode(uint8_t reg);
 /** Extract the current ALCC mode from the control register
  *  This value is located in bits [2:1]
  */
-static LTC2943_ADCMode_t ChipControl_ReadPrescalerM(uint8_t reg);
+static LTC2943_AdcMode_t ChipControl_ReadPrescalerM(uint8_t reg);
 
 /** Extract the current ALCC mode from the control register
  *  This value is located in bit [0]
@@ -150,7 +150,7 @@ static uint8_t ChipControl_WriteAdcMode(uint8_t reg, LTC2943_AdcMode_t mode);
 /** Set the ALCC mode in the control register
  *  This value is located in bits [5:3]
  */
-static LTC2943_AlccMode_t ChipControl_WriteAlccMode(uint8_t reg, LTC2943_Alcc Mode_t mode);
+static LTC2943_AlccMode_t ChipControl_WriteAlccMode(uint8_t reg, LTC2943_AlccMode_t mode);
 
 /** Set the ALCC mode in the control register
  *  This value is located in bits [2:1]
