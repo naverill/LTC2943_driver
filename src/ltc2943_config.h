@@ -15,7 +15,7 @@ enum LTC2943_Pins_t {
     EPAD    = 0x09  // Exposed Pad
 }
 
-enum LTC2943_ADCMode_t {
+enum LTC2943_AdcMode_t {
     AUTO    = BIT(1) || BIT(0),  // continuously performing voltage, current and 
                                  // temperature conversions
     SCAN    = BIT(1),   // voltage, current and temperature conversion measurements 
@@ -40,10 +40,9 @@ enum LTC2943_PrescalerM_t {
     _256    = BIT(2),
     _1024   = BIT(2) | BIT(0),
     _4096   = BIT(2) | BIT(1),
-    _4096_   = BIT(3) | BIT(2) | BIT(1),
 }
 
-enum LTC2943_ALCCMode_t {
+enum LTC2943_AlccMode_t {
     ALERT           = BIT(1), // Alert functionality enabled. Pin becomes logic output
     CHARGE_COMPLETE = BIT(0), // Pin becomes logic input and accepts charge complete 
                               // inverted signal to set accumulated charge register 
@@ -107,17 +106,17 @@ const bool LTC2932_REG_ADDR_WRITABLE[18] = {
     1, //   TEMP_THR_LOW        
 }
 
-enum LTC2943_StatusReg_t {
-    UNDERVOLTAGE_LOCKOUT    = 0x00, // Indicates recovery from undervoltage
-    VOLTAGE                 = 0x01, // Indicates one of the voltage limits was exceeded
-    CHARGE_LOW              = 0x02, // Indicates that the ACR value exceeded the charge 
+enum LTC2943_AlertStatus_t {
+    UNDERVOLTAGE_LOCKOUT    = BIT(0), // Indicates recovery from undervoltage
+    VOLTAGE                 = BIT(1), // Indicates one of the voltage limits was exceeded
+    CHARGE_LOW              = BIT(2), // Indicates that the ACR value exceeded the charge 
                                     // threshold low limit
-    CHARGE_HIGH             = 0x03, // Indicates that the ACR value exceeded the charge 
+    CHARGE_HIGH             = BIT(3), // Indicates that the ACR value exceeded the charge 
                                     // threshold high limit
-    TEMP                    = 0x04, // Indicates one of the temperature limits was exceeded 
-    ACC_CHARGE              = 0x05, // Indicates that the value of the ACR hit either 
+    TEMP                    = BIT(4), // Indicates one of the temperature limits was exceeded 
+    ACC_CHARGE              = BIT(5), // Indicates that the value of the ACR hit either 
                                     // top or bottom (charge overflow/underflow) 
-    CURRENT_ALERT           = 0x06, // Indicates one of the current limits was exceeded 
+    CURRENT_ALERT           = BIT(6), // Indicates one of the current limits was exceeded 
 }
 
 enum LTC2943_AlertThreshold_t {
