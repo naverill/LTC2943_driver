@@ -1,194 +1,362 @@
 /**
  * TODO
  */
+#include <string.h>
+#include <stdint.h>
 #include "chip_control.h" 
 #include "ltc2943_config.h"
 #include "ltc2943_sim.c"
 
 
-static bool ChipControl_ReadRegister(uint8_t reg_addr, uint8_t *read_buff, uint8_t data_size){
-    /** Read in data from the battery gauge. 
-     *
-     * The LTC2943 uses a 14-bit ADC, so the data outputs are stored in a uint16_t 
-     *  variable. 
-     *  
-     */
-    bool success = false;
-    if (LTC2932_Write(LTC2942_I2C_ADDR, &(reg_addr), 1) == 0){
-        if (LTC2932_Read(LTC2942_I2C_ADDR, read_buff, data_size) == 0){
-            success = true;
-        }
-    }
-    return success;
-}
-
-static bool ChipControl_WriteRegister(uint8_t reg_addr, uint8_t *data_buff, uint8_t data_size){
-    /** Write data to the battery gauge. 
-     *
-     */
-    uint8_t buff_size = data_size + 1;
-    uint8_t write_buff[buff_size]; 
-    write_buff[0] = (uint8_t)reg_addr;
-    memcpy(*write_buff + 1, data_buff, data_size)
-
-    bool success = false;
-    if (LTC2932_REG_ADDR_WRITEABLE[reg_addr] == 1){ 
-       if (LTC2932_Write(LTC2942_I2C_ADDR, write_buff, buff_size) == 0){
-            success = true;
-       } 
-    }
-    return success;
-}
-
 LTC2943_AdcMode_t ChipControl_GetAdcMode(){
-    /**
-     *
-     */
-    uint8_t *read_buff;
-    bool success = ChipControl_ReadRegister(CONTROL, read_buff, 1); 
-    if (!success || !(*read_buff)){
-        return NULL;
+    uint8_t read_buff = 0;
+    bool success = ChipControl_ReadRegister(CONTROL_ADDR, &read_buff, 1); 
+    if (!success || !read_buff){
+        return -1;
     }
-    return ChipControl_ReadAdcMode(*read_buff) 
+    return ChipControl_ReadAdcMode(read_buff);
 }
 
-bool ChipControl_SetAdcMode(LTC2943_ADCMode_t mode){
-    /**
-     *
-     */
-    uint8_t *read_buff;
-    // check current mode
-    bool success = ChipControl_ReadRegister(CONTROL, read_buff, 1); 
 
-    uint8_t reg = *read_buff;
-    LTC2943_AdcMode_t curr_mode = ChipControl_WriteAdcMode(reg);
+bool ChipControl_SetAdcMode(LTC2943_AdcMode_t mode){
+    uint8_t read_buff;
+    // check current mode
+    bool success = ChipControl_ReadRegister(CONTROL_ADDR, &read_buff, 1); 
+
+    LTC2943_AdcMode_t curr_mode = ChipControl_WriteAdcMode(read_buff, mode);
     if (curr_mode == mode){
         success = true;
     }
     else {
          // set bits [7:6] to new mode 
-         uint8_t write_buff = ChipControl_WriteAdcMode(reg, mode);
-         success = ChipControl_WriteRegister(CONTROL, &write_buff, 1);
+         uint8_t write_buff = ChipControl_WriteAdcMode(read_buff, mode);
+         success = ChipControl_WriteRegister(CONTROL_ADDR, &write_buff, 1);
     }
     return success;
 }
 
-LTC2943_AlccMode_t uint8_t ChipControl_GetAlccMode(){
-    /**
-     *
-     */
-    uint8_t *read_buff;
-    bool success = ChipControl_ReadRegister(CONTROL, read_buff, 1); 
-    if (!success || !(*read_buff)){
-        return NULL;
+
+LTC2943_AlccMode_t ChipControl_GetAlccMode(){
+    uint8_t read_buff;
+    bool success = ChipControl_ReadRegister(CONTROL_ADDR, &read_buff, 1); 
+    if (!success || !read_buff){
+        return -1;
     }
-    return ChipControl_ReadAlccMode(*read_buff) 
+    return ChipControl_ReadAlccMode(read_buff); 
 }
 
-bool ChipControl_SetAlccMode(LTC2943_ALCCMode_t mode){
-    /**
-     *
-     */
-    uint8_t *read_buff;
+
+bool ChipControl_SetAlccMode(LTC2943_AlccMode_t mode){
+    uint8_t read_buff;
     // check current mode
-    bool success = ChipControl_ReadRegister(CONTROL, read_buff, 1); 
-    uint8_t reg = *read_buff;
-    LTC2943_AlccMode_t curr_mode = ChipControl_ReadAlccMode(reg);
+    bool success = ChipControl_ReadRegister(CONTROL_ADDR, &read_buff, 1); 
+    LTC2943_AlccMode_t curr_mode = ChipControl_ReadAlccMode(read_buff);
     if (curr_mode == mode){
          success = true;
     }
     else {
          // set bits [5:3] to new mode 
-         uint8_t write_buff = ChipControl_WriteAlccMode(reg, mode);
-         success = ChipControl_WriteRegister(CONTROL, write_buff, 1);
+         uint8_t write_buff = ChipControl_WriteAlccMode(read_buff, mode);
+         success = ChipControl_WriteRegister(CONTROL_ADDR, &write_buff, 1);
     }
     return success;
 
 }
 
-LTC2943_PrescalerM_t uint8_t ChipControl_GetPrescalerM(){
-    /**
-     *
-     */
-    uint8_t *read_buff;
-    bool success = ChipControl_ReadRegister(CONTROL, read_buff, 1); 
-    if (!success || !(*read_buff)){
-        return NULL;
+LTC2943_PrescalerM_t ChipControl_GetPrescalerM(){
+    uint8_t read_buff;
+    bool success = ChipControl_ReadRegister(CONTROL_ADDR, &read_buff, 1); 
+    if (!success){
+        return -1;
     }
-    return ChipControl_ReadPrescalerM(*read_buff) 
+    return ChipControl_ReadPrescalerM(read_buff); 
 }
 
 bool ChipControl_SetPrescalerM(LTC2943_PrescalerM_t nbit){
-    /**
-     *
-     */
-    uint8_t *read_buff;
+    uint8_t read_buff;
     // check current mode
-    bool success = ChipControl_ReadRegister(CONTROL, read_buff, 1); 
-    uint8_t reg = *read_buff;
-    LTC2943_AlccMode_t curr_mode = ChipControl_ReadPrescalerM(reg);
-    if (curr_mode == mode){
+    bool success = ChipControl_ReadRegister(CONTROL_ADDR, &read_buff, 1); 
+    LTC2943_AlccMode_t curr_nbit = ChipControl_ReadPrescalerM(read_buff);
+    if (curr_nbit == nbit){
          success = true;
     }
     else {
          // set bits [2:1] to new mode 
-         uint8_t write_buff = ChipControl_WriteAlccMode(reg, nbit);
-         success = ChipControl_WriteRegister(CONTROL, write_buff, 1);
+         uint8_t write_buff = ChipControl_WriteAlccMode(read_buff, nbit);
+         success = ChipControl_WriteRegister(CONTROL_ADDR, &write_buff, 1);
     }
     return success;
 
 }
 
 bool ChipControl_GetAlert(LTC2943_AlertStatus_t alert){
-    /** Check if an alert has been flagged in the Status register
-     *
-     */
-    uint8_t *read_buff;
-    bool success = ChipControl_ReadRegister(STATUS, read_buff, 1); 
-    if (!success || !(*read_buff)){
-        return NULL;
-    }
-    return ChipControl_CheckAlert(*read_buff, alert) 
+    uint8_t read_buff;
+    ChipControl_ReadRegister(STATUS_ADDR, &read_buff, 1); 
+    return ChipControl_CheckAlert(read_buff, alert); 
 }
 
-uint16_t ChipControl_GetThreshold(tLTC2943_ThrAddr_t threshold){
-    /**
-     *
-     */
+float ChipControl_GetChargeMeasurement(){
+    return ChipControl_GetCharge(CHARGE_ADDR);
+}
+
+bool ChipControl_SetChargeMeasurement(float value){
+    return ChipControl_SetCharge(CHARGE_ADDR, value);
+}
+
+
+bool ChipControl_SetChargeThresholdLow(float value){
+    return ChipControl_SetCharge(CHARGE_THR_LOW_ADDR, value);
+}
+
+
+bool ChipControl_SetChargeThresholdHigh(float value){
+    return ChipControl_SetCharge(CHARGE_THR_HIGH_ADDR, value);
+}
+
+
+float ChipControl_GetVoltageMeasurement(){
+    return ChipControl_GetVoltage(VOLTAGE_ADDR);
+}
+
+bool ChipControl_SetVoltageThresholdLow(float value){
+    return ChipControl_SetVoltage(VOLTAGE_THR_LOW_ADDR, value);
+}
+
+bool ChipControl_SetVoltageThresholdHigh(float value){
+    return ChipControl_SetVoltage(CHARGE_THR_HIGH_ADDR, value);
+}
+
+
+float ChipControl_GetCurrentMeasurement(){
+    return ChipControl_GetCurrent(CURR_ADDR);
+}
+
+bool ChipControl_SetCurrentThresholdLow(float value){
+    return ChipControl_SetCurrent(CURR_THR_LOW_ADDR, value);
+}
+
+
+bool ChipControl_SetCurrentThresholdHigh(float value){
+    return ChipControl_SetCurrent(CHARGE_THR_HIGH_ADDR, value);
+}
+
+
+float ChipControl_GetTemperatureMeasurement(){
+    return ChipControl_GetTemperature(TEMP_ADDR);
+}
+
+bool ChipControl_SetTemperatureThresholdLow(float value){
+    return ChipControl_SetTemperature(TEMP_THR_LOW_ADDR, value);
+}
+
+
+bool ChipControl_SetTemperatureThresholdHigh(float value){
+    return ChipControl_SetTemperature(TEMP_THR_HIGH_ADDR, value);
+}
+
+
+static float ChipControl_GetCharge(uint8_t addr){
+    bool success = false;
     uint8_t read_buff[2];
-    bool success = ChipControl_ReadRegister(threshold, &read_buff, 1); 
-    if (!success || !(*read_buff)){
+    success = ChipControl_ReadRegister(addr, read_buff, 2); 
+    if (!success){
+        return -1;
+    }
+    uint16_t reg = 0;
+    ChipControl_BuffToUint(&reg, read_buff);
+    return ChipControl_RegisterToCharge(reg);
+}
+
+
+static bool ChipControl_SetCharge(uint8_t addr, float value){
+    bool success = false;
+    uint8_t write_buff[2];
+    uint16_t reg = ChipControl_ChargeToRegister(value);
+    ChipControl_UintToBuff(&reg, write_buff);
+    success = ChipControl_ReadRegister(addr, write_buff, 2); 
+    return success;
+}
+
+
+static float ChipControl_GetVoltage(uint8_t addr){
+    bool success = false;
+    uint8_t read_buff[2];
+    success = ChipControl_ReadRegister(addr, read_buff, 2); 
+    if (!success){
+        return -1;
+    }
+    uint16_t reg = 0;
+    ChipControl_BuffToUint(&reg, read_buff);
+    return ChipControl_RegisterToVoltage(reg);
+}
+
+
+static bool ChipControl_SetVoltage(uint8_t addr, float value){
+    bool success = false;
+    uint8_t write_buff[2];
+    uint16_t reg = ChipControl_VoltageToRegister(value);
+    ChipControl_UintToBuff(&reg, write_buff);
+    success = ChipControl_ReadRegister(addr, write_buff, 2); 
+    return success;
+}
+
+
+static float ChipControl_GetCurrent(uint8_t addr){
+    bool success = false;
+    uint8_t read_buff[2];
+    success = ChipControl_ReadRegister(addr, read_buff, 2); 
+    if (!success){
+        return -1;
+    }
+    uint16_t reg = 0;
+    ChipControl_BuffToUint(&reg, read_buff);
+    return ChipControl_RegisterToCurrent(reg);
+}
+
+
+static bool ChipControl_SetCurrent(uint8_t addr, float value){
+    bool success = false;
+    uint8_t write_buff[2];
+    uint16_t reg = ChipControl_CurrentToRegister(value);
+    ChipControl_UintToBuff(&reg, write_buff);
+    success = ChipControl_ReadRegister(addr, write_buff, 2); 
+    if (!success){
         return NULL;
     }
-    uint16_t thr = 0;
-    thr = ChipControl_BuffToUint(&thr, read_buff)
-    return thr;
+    return success;
 }
 
-bool ChipControl_SetThreshold(LTC2943_AlertThreshold_t threshold, uint16_t value){
-    /**
-     *
-     */
 
-    uint8_t size = sizeof(uint16_t)
+static float ChipControl_GetTemperature(uint8_t addr){
+    bool success = false;
+    uint8_t read_buff[2];
+    success = ChipControl_ReadRegister(addr, read_buff, 2); 
+    if (!success){
+        return -1;
+    }
+    uint16_t reg = 0;
+    ChipControl_BuffToUint(&reg, read_buff);
+    return ChipControl_RegisterToTemperature(reg);
+}
+
+
+static bool ChipControl_SetTemperature(uint8_t addr, float value){
+    bool success = false;
+    uint8_t write_buff[2];
+    uint16_t reg = ChipControl_TemperatureToRegister(value);
+    ChipControl_UintToBuff(&reg, write_buff);
+    success = ChipControl_ReadRegister(addr, write_buff, 2); 
+    if (!success){
+        return NULL;
+    }
+    return success;
+}
+
+
+static bool ChipControl_ReadRegister(uint8_t reg_addr, uint8_t *read_buff, uint8_t data_size){
+    bool success = false;
+    if (LTC2932_Write(LTC2943_I2C_ADDR, &reg_addr, 1) == 0){
+        if (LTC2932_Read(LTC2943_I2C_ADDR, read_buff, data_size) == 0){
+            success = true;
+        }
+    }
+    return success;
+}
+
+
+static bool ChipControl_WriteRegister(uint8_t reg_addr, uint8_t *data_buff, uint8_t data_size){
+    bool success = false;
+    uint8_t buff_size = data_size + 1;
+    uint8_t write_buff[buff_size]; 
+    write_buff[0] = reg_addr;
+    memcpy((uint8_t *)(write_buff + 1), data_buff, data_size);
+
+    if (LTC2943_REG_ADDR_WRITABLE[reg_addr] == 1){ 
+       if (LTC2932_Write(LTC2943_I2C_ADDR, write_buff, buff_size) == 0){
+            success = true;
+       } 
+    }
+    return success;
+}
+
+
+static bool ChipControl_SetRegister(LTC2943_RegAddr_t threshold, uint16_t value){
+    uint8_t size = sizeof(uint16_t);
     uint8_t write_buff[size];
-    ChipControl_UintToBuff(&value, &write_buff);
-    bool success = ChipControl_WriteRegister(threshold, &write_buff, size); 
-    return true;
+    ChipControl_UintToBuff(&value, write_buff);
+    bool success = ChipControl_WriteRegister(threshold, write_buff, size); 
+    return success;
 }
 
-float64_t ChipControl_GetMeasurement(LTC2943_Measurement_t meas){
-    /**
-     *
-     */
-
+static float ChipControl_RegisterToVoltage(uint16_t reg){
+    return 23600 * ((float) reg / 0xfff);
 }
 
-static void ChipControl_UintToBuff(void *data, uint8_t *write_buff){
+
+static uint16_t ChipControl_VoltageToRegister(float value){
+     uint32_t reg = (value * 0xfff) / 23600;
+     if (reg > 0xfff){
+        reg = 0xfff;
+     } else if (reg < 0){
+        reg = 0;
+     }
+     return  (uint16_t) reg;
+}
+
+
+static float ChipControl_RegisterToCurrent(uint16_t reg){
+    return (float) (60000 / RSENSE) * ((reg - 0x7fff) / 0x7fff);
+}
+
+
+static uint16_t ChipControl_CurrentToRegister(float value){
+     uint32_t reg = (value * RSENSE * 0x7fff / 60000) + 0x7fff; 
+     if (reg > 0xffff){
+        reg = 0xffff;
+     } else if (reg < 0){
+        reg = 0;
+     }
+     return (uint16_t) reg;
+}
+
+
+static float ChipControl_RegisterToTemperature(uint16_t reg){
+    return (float) (reg / 0xffff) * 510;
+}
+
+
+static uint16_t ChipControl_TemperatureToRegister(float value){
+     uint32_t reg = (value * 0xffff) / 510; 
+     if (reg > 0xffff){
+         reg = 0xffff;
+     } else if (reg < 0){
+        reg = 0;
+     }
+     return  (uint16_t) reg;
+}
+
+
+static float ChipControl_RegisterToCharge(uint16_t reg){
+    return (float) reg/ (0.34 * 50 / RSENSE) * (config.PRESCALER_M / 4096);
+}
+
+
+static uint16_t ChipControl_ChargeToRegister(float value){
+     uint32_t reg = value * (0.34 * 50 / RSENSE) * (config.PRESCALER_M / 4096); 
+     if (reg > 0xffff){
+         reg = 0xffff;
+     } else if (reg < 0){
+        reg = 0;
+     }
+     return  (uint16_t) reg;
+}
+
+
+static uint8_t *ChipControl_UintToBuff(void *data, uint8_t *write_buff){
     uint8_t i;
     uint8_t size = sizeof(data);
     for (i = 0; i < size; i++){
-        write_buff[i] = (*data >> (8 * (size - i - 1));
+        write_buff[i] = *data >> (8 * (size - i - 1));
     }
 }
 
@@ -196,79 +364,53 @@ static void ChipControl_BuffToUint(void *data, uint8_t *read_buff){
     uint8_t i;
     uint8_t size = sizeof(read_buff);
     for (i = 0; i < size; i++){
-        data |= (*read_buff[i]  << (8 * (size - i - 1));
+        data |= read_buff[i]  << (8 * (size - i - 1));
     }
 }
 
 static LTC2943_AdcMode_t ChipControl_ReadAdcMode(uint8_t reg){
-    /** Extract the current ADC mode from the control register
-     *  This value is located in bits [7:6]
-     */
-    return (LTC2943_ADCMode_t)(reg >> 6);
+    return (LTC2943_AdcMode_t)(reg >> 6);
 }
 
 static LTC2943_AlccMode_t ChipControl_ReadAlccMode(uint8_t reg){
-    /** Extract the current ALCC mode from the control register
-     *  This value is located in bits [5:3]
-     */
-    uint8_t bit_mask = ((BIT(2) BIT(1) || BIT(0)) << 3); 
+    uint8_t bit_mask = (BIT(5) | BIT(4) | BIT(3)); 
     uint8_t mode = (reg & bit_mask) >> 3;
     return (LTC2943_AlccMode_t) mode; 
 }
 
-static LTC2943_ADCMode_t ChipControl_ReadPrescalerM(uint8_t reg){
-    /** Extract the current ALCC mode from the control register
-     *  This value is located in bits [2:1]
-     */
-    uint8_t bit_mask = ((BIT(1) || BIT(0)) << 1); 
+static LTC2943_PrescalerM_t ChipControl_ReadPrescalerM(uint8_t reg){
+    uint8_t bit_mask = (BIT(2) | BIT(1)); 
     uint8_t nbit = (reg & bit_mask) >> 1;
     return (LTC2943_PrescalerM_t) nbit; 
 }
 
 static bool ChipControl_ReadShutdown(uint8_t reg){
-    /** Extract the current ALCC mode from the control register
-     *  This value is located in bit [0]
-     */
     uint8_t bit_mask = BIT(0); 
     return (bool)(reg & bit_mask);
 }
 
 
 static uint8_t ChipControl_WriteAdcMode(uint8_t reg, LTC2943_AdcMode_t mode){
-    /** Set the ADC mode in the control register
-     *  This value is located in bits [7:6]
-     */
-    uint8_t bit_mask = ~((BIT(1) || BIT(0)) << 6)
+    uint8_t bit_mask = ~(BIT(7) || BIT(6));
     return (reg & bit_mask) | ((uint8_t)mode << 6);
 }
 
-static LTC2943_AlccMode_t ChipControl_WriteAlccMode(uint8_t reg, LTC2943_Alcc Mode_t mode){
-    /** Set the ALCC mode in the control register
-     *  This value is located in bits [5:3]
-     */
-    uint8_t bit_mask = ~((BIT(2) || BIT(1) || BIT(0)) << 3); 
+static LTC2943_AlccMode_t ChipControl_WriteAlccMode(uint8_t reg, LTC2943_AlccMode_t mode){
+    uint8_t bit_mask = ~(BIT(5) || BIT(4) || BIT(3)); 
     return (reg & bit_mask) | (((uint8_t)mode << 3));
 }
 
-static LTC2943_ADCMode_t ChipControl_WritePrescalerM(uint8_t reg, LTC2943_PrescalerM_t nbit){
-    /** Set the ALCC mode in the control register
-     *  This value is located in bits [2:1]
-     */
-    uint8_t bit_mask = ~((BIT(1) || BIT(0)) << 1); 
+static LTC2943_AdcMode_t ChipControl_WritePrescalerM(uint8_t reg, LTC2943_PrescalerM_t nbit){
+    uint8_t bit_mask = ~(BIT(2) || BIT(1)); 
     return (reg & bit_mask) | (((uint8_t)nbit << 1));
 }
 
 static bool ChipControl_WriteShutdown(uint8_t reg, bool shutdown){
-    /** Extract the current ALCC mode from the control register
-     *  This value is located in bit [0]
-     */
     uint8_t bit_mask = ~BIT(0); 
     return (reg & bit_mask) | ((uint8_t) shutdown);
 }
 
 static bool ChipControl_CheckAlert(uint8_t reg, LTC2943_AlertStatus_t alert){
-    /** Check if an alert bit has been set in the status register 
-     */
     uint8_t bit_mask = (uint8_t) alert; 
     return ((reg & bit_mask) != 0);
 }
