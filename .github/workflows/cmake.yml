@@ -22,7 +22,6 @@ jobs:
       matrix:
         config:
           - { os: ubuntu-20.04, CC: gcc-7, CXX: g++-7}
-          - { os: ubuntu-20.04, CC: clang-8, CXX: clang++-8}
           - { os: ubuntu-20.04, CC: gcc-10, CXX: g++-10}
           - { os: ubuntu-20.04, CC: clang-12, CXX: clang++-12}
           - { os: ubuntu-22.04, CC: clang-15, CXX: clang++-15}
