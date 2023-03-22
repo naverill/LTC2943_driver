@@ -26,6 +26,23 @@ ENDIF()
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-register -Wno-ignored-attributes")
 
+# --------------------------------------------------------------------------------
+#                         Add CppUTest Dependency
+# --------------------------------------------------------------------------------
+#ExternalProject_Add (
+#      cpputest 
+#      BUILD_IN_SOURCE 1
+#      GIT_REPOSITORY https://github.com/cpputest/cpputest.git 
+#      UPDATE_COMMAND ""
+#      INSTALL_COMMAND make install
+#      PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cpputest"
+#      BUILD_COMMAND "" 
+#)
+#add_library(cpputest STATIC IMPORTED)
+#set_target_properties(cpputest PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/external/cpputest/lib/cpputest.a)
+#include_directories(${CMAKE_CURRENT_BINARY_DIR}/external/libzmq/include)
+#include_directories(${CMAKE_CURRENT_BINARY_DIR}/external/cppzmq/src/cppzmq)
+
 add_executable(main src/main.c)
 # add_dependencies(main ${LIBRARY_NAME})
 target_link_libraries(main PRIVATE ${LIBRARY_NAME} m)

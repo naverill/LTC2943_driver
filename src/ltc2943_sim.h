@@ -18,7 +18,7 @@ struct LTC2943_Status_t status = {
     0,  // CHARGE_LOW 
     0,  // CHARGE_HIGH 
     0,  // TEMP 
-    0,  // ACC_CHARGE 
+    0,  // CHARGE 
     0   // CURRENT
 };
 
@@ -46,6 +46,7 @@ struct LTC2943_Measurement_t meas = {
     0,      // CURRENT
     0,      // TEMPERATURE
 };
+const bool SIMULATE = false;
 
 bool LTC2943_Initialise();   // Initialise the driver
 bool LTC2943_Read(uint8_t address, uint8_t *dest, uint8_t dataSize); // Read data from the chip @address to dest

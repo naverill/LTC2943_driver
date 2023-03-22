@@ -243,11 +243,17 @@ bool ChipControl_SetChargeMeasurement(float value){
     return ChipControl_SetCharge(CHARGE_ADDR, value);
 }
 
+float ChipControl_GetChargeThresholdLow(){
+    return ChipControl_GetCharge(CHARGE_THR_LOW_ADDR);
+}
 
 bool ChipControl_SetChargeThresholdLow(float value){
     return ChipControl_SetCharge(CHARGE_THR_LOW_ADDR, value);
 }
 
+float ChipControl_GetChargeThresholdHigh(){
+    return ChipControl_GetCharge(CHARGE_THR_HIGH_ADDR);
+}
 
 bool ChipControl_SetChargeThresholdHigh(float value){
     return ChipControl_SetCharge(CHARGE_THR_HIGH_ADDR, value);
@@ -258,8 +264,16 @@ float ChipControl_GetVoltageMeasurement(){
     return ChipControl_GetVoltage(VOLTAGE_ADDR);
 }
 
+float ChipControl_GetVoltageThresholdLow(){
+    return ChipControl_GetVoltage(VOLTAGE_THR_LOW_ADDR);
+}
+
 bool ChipControl_SetVoltageThresholdLow(float value){
     return ChipControl_SetVoltage(VOLTAGE_THR_LOW_ADDR, value);
+}
+
+float ChipControl_GetVoltageThresholdHigh(){
+    return ChipControl_GetVoltage(VOLTAGE_THR_HIGH_ADDR);
 }
 
 bool ChipControl_SetVoltageThresholdHigh(float value){
@@ -271,10 +285,17 @@ float ChipControl_GetCurrentMeasurement(){
     return ChipControl_GetCurrent(CURR_ADDR);
 }
 
+float ChipControl_GetCurrentThresholdLow(){
+    return ChipControl_GetCurrent(CURR_THR_LOW_ADDR);
+}
+
 bool ChipControl_SetCurrentThresholdLow(float value){
     return ChipControl_SetCurrent(CURR_THR_LOW_ADDR, value);
 }
 
+float ChipControl_GetCurrentThresholdHigh(){
+    return ChipControl_GetCurrent(CURR_THR_HIGH_ADDR);
+}
 
 bool ChipControl_SetCurrentThresholdHigh(float value){
     return ChipControl_SetCurrent(CHARGE_THR_HIGH_ADDR, value);
@@ -285,10 +306,17 @@ float ChipControl_GetTemperatureMeasurement(){
     return ChipControl_GetTemperature(TEMP_ADDR);
 }
 
+float ChipControl_GetTemperatureThresholdLow(){
+    return ChipControl_GetTemperature(TEMP_THR_LOW_ADDR);
+}
+
 bool ChipControl_SetTemperatureThresholdLow(float value){
     return ChipControl_SetTemperature(TEMP_THR_LOW_ADDR, value);
 }
 
+float ChipControl_GetTemperatureThresholdHigh(){
+    return ChipControl_GetTemperature(TEMP_THR_HIGH_ADDR);
+}
 
 bool ChipControl_SetTemperatureThresholdHigh(float value){
     return ChipControl_SetTemperature(TEMP_THR_HIGH_ADDR, value);

@@ -79,9 +79,9 @@ LTC2943_AlertStatus_t CHARGE_HIGH             = BIT(3); // Indicates that the AC
                                                         // threshold high limit
 LTC2943_AlertStatus_t TEMP                    = BIT(4); // Indicates one of the temperature limits 
                                                         // was exceeded 
-LTC2943_AlertStatus_t ACC_CHARGE              = BIT(5); // Indicates that the value of the ACR hit either 
+LTC2943_AlertStatus_t CHARGE                  = BIT(5); // Indicates that the value of the ACR hit either 
                                                         // top or bottom (charge overflow/underflow) 
-LTC2943_AlertStatus_t CURRENT_ALERT           = BIT(6); // Indicates one of the current limits was exceeded 
+LTC2943_AlertStatus_t CURRENT                 = BIT(6); // Indicates one of the current limits was exceeded 
 
 
 const bool LTC2943_REG_ADDR_WRITABLE[18] = {

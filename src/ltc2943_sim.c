@@ -385,7 +385,10 @@ bool LTC2943_Read(uint8_t address, uint8_t *dest, uint8_t dataSize){
      */
     bool success = false;
     success = LTC2943_ReadRegister(read_register, dest, dataSize);
-    LTC2943_Simulate();
+
+    if (SIMULATE){
+        LTC2943_Simulate();
+    }
     return success;
 }
 
@@ -408,3 +411,15 @@ bool LTC2943_Write(uint8_t address, uint8_t *src, uint8_t dataSize){
     return success;
 }
 
+void LTC2943_Reset(){
+    LTC2943_Status_t status = (LTC2943_Status_t){
+        .UNDERVOLTAGE_LOCKOUT =   1,
+        .VOLTAGE =  0,
+        .CHARGE_LOW  = 0,
+        .CHARGE_HIGH =  0, 
+        .TEMP =  0,
+        .CHARGE = 0,
+        .CURRENT = 0
+    };
+
+}
