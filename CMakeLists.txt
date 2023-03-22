@@ -25,9 +25,6 @@ ENDIF()
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-register -Wno-ignored-attributes")
 
-set(TESTFILES        # All .cpp files in tests/
-    tests/main.c
-)
 # --------------------------------------------------------------------------------
 #                         Add CppUTest Dependency
 # --------------------------------------------------------------------------------

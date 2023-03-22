@@ -46,11 +46,11 @@ LTC2943_PrescalerM_t _4096   = BIT(2) | BIT(1);
 
 
 typedef const uint8_t LTC2943_AlccMode_t; 
+LTC2943_AlccMode_t DISABLED        = 0;         // Pin disabled 
 LTC2943_AlccMode_t ALERT           = BIT(1);    // Alert functionality enabled. Pin becomes logic output
 LTC2943_AlccMode_t CHARGE_COMPLETE = BIT(0);    // Pin becomes logic input and accepts charge complete 
                                                 // inverted signal to set accumulated charge register 
                                                 // (C,D) to FFFFh. 
-LTC2943_AlccMode_t DISABLED        = 0;         // Pin disabled 
 LTC2943_AlccMode_t NOT_ALLOWED     = BIT(1) | BIT(0);
 
 
@@ -85,20 +85,20 @@ LTC2943_AlertStatus_t CURRENT                 = BIT(6); // Indicates one of the 
 
 
 const bool LTC2943_REG_ADDR_WRITABLE[18] = {
-    0, //   STATUS_ADDR              
-    1, //   CONTROL_ADDR             
-    1, //   CHARGE_ADDR      
-    1, //   CHARGE_THR_HIGH_ADDR 
-    1, //   CHARGE_THR_LOW_ADDR  
-    0, //   VOLTAGE_ADDR         
-    1, //   VOLTAGE_THR_HIGH_ADDR
-    1, //   VOLTAGE_THR_LOW_ADDR 
-    0, //   CURR_ADDR            
-    1, //   CURR_THR_HIGH_ADDR   
-    1, //   CURR_THR_LOW_ADDR    
-    0, //   TEMP_ADDR            
-    1, //   TEMP_THR_HIGH_ADDR       
-    1, //   TEMP_THR_LOW_ADDR        
+    0, // STATUS_ADDR              
+    1, // CONTROL_ADDR             
+    1, // CHARGE_ADDR      
+    1, // CHARGE_THR_HIGH_ADDR 
+    1, // CHARGE_THR_LOW_ADDR  
+    0, // VOLTAGE_ADDR         
+    1, // VOLTAGE_THR_HIGH_ADDR
+    1, // VOLTAGE_THR_LOW_ADDR 
+    0, // CURR_ADDR            
+    1, // CURR_THR_HIGH_ADDR   
+    1, // CURR_THR_LOW_ADDR    
+    0, // TEMP_ADDR            
+    1, // TEMP_THR_HIGH_ADDR       
+    1, // TEMP_THR_LOW_ADDR        
 };
 
 #endif // LCT2943_CONFIG_H

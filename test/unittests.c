@@ -199,3 +199,9 @@ void Test_SetTempThrLow(){
     TEST_ASSERT_EQUAL_FLOAT(value, charge);
     LTC2943_Reset();
 }
+
+int main(void) {
+    UNITY_BEGIN();
+    RUN_TEST(Test_GetAdcMode);
+    return UNITY_END();
+}

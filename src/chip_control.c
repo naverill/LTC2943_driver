@@ -6,6 +6,7 @@
 #include "chip_control.h"
 #include "ltc2943_sim.h"
 
+
 /** Check if an alert bit has been set in the status register 
  */
 static bool ChipControl_CheckAlert(uint8_t reg, LTC2943_AlertStatus_t alert){
