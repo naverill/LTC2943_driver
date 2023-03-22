@@ -141,7 +141,7 @@ uint16_t LTC2943_ChargeToRegister(float value){
  *  Vsense = 23.6V * (RESULT / 65536)
  *  (sourced from datasheet)
  */
-static float LTC2943_RegisterToVoltage(uint16_t reg){
+float LTC2943_RegisterToVoltage(uint16_t reg){
     return 23600 * ((float) reg / 0xfff);
 }
 
@@ -150,7 +150,7 @@ static float LTC2943_RegisterToVoltage(uint16_t reg){
  *  Convert voltage (mV) to reading for registers (I, J, K, L, M), where 
  *  Vsense = (RESULT * 65536) / 23.6V
  */
-static uint16_t LTC2943_VoltageToRegister(float value){
+uint16_t LTC2943_VoltageToRegister(float value){
      uint32_t reg = (value * 0xfff) / 23600;
      if (reg > 0xfff){
         reg = 0xfff;
@@ -168,7 +168,7 @@ static uint16_t LTC2943_VoltageToRegister(float value){
  *  I-bat = (60mV / RSENSE ) * (value - 7FFFh) / 7FFFhi (mA)
  *  (sourced from datasheet)
  */
-static float LTC2943_RegisterToCurrent(uint16_t reg){
+float LTC2943_RegisterToCurrent(uint16_t reg){
     return (float) (60000 / RSENSE) * ((reg - 0x7fff) / 0x7fff);
 }
 
@@ -176,7 +176,7 @@ static float LTC2943_RegisterToCurrent(uint16_t reg){
 /**
  *  Convert current to register input
  */
-static uint16_t LTC2943_CurrentToRegister(float value){
+uint16_t LTC2943_CurrentToRegister(float value){
      uint32_t reg = (value * RSENSE * 0x7fff / 60000) + 0x7fff; 
      if (reg > 0xffff){
         reg = 0xffff;
@@ -193,7 +193,7 @@ static uint16_t LTC2943_CurrentToRegister(float value){
  *  T = 510K * (value / 0xfff) 
  *  (sourced from datasheet)
  */
-static float LTC2943_RegisterToTemperature(uint16_t reg){
+float LTC2943_RegisterToTemperature(uint16_t reg){
     return (float) (reg / 0xffff) * 510;
 }
 
@@ -202,7 +202,7 @@ static float LTC2943_RegisterToTemperature(uint16_t reg){
  *  Convert temperature (K) to register input  
  *  (sourced from datasheet)
  */
-static uint16_t LTC2943_TemperatureToRegister(float value){
+uint16_t LTC2943_TemperatureToRegister(float value){
      uint32_t reg = (value * 0xffff) / 510; 
      if (reg > 0xffff){
          reg = 0xffff;
@@ -278,7 +278,7 @@ bool LTC2943_WriteShutdown(uint8_t reg, bool shutdown){
     return (reg & bit_mask) | ((uint8_t) shutdown);
 }
 
-uint8_t LTC2943_WriteAlerts(){
+static uint8_t LTC2943_WriteAlerts(){
     uint8_t reg = 0 | (
         status.CURRENT << 6
     ) | (

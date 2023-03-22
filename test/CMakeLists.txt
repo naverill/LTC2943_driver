@@ -14,7 +14,7 @@ set(TEST_RUNNER_PARAMS "")
 # --------------------------------------------------------------------------------
 include_directories(${PROJECT_SOURCE_DIR}/../src)
 add_executable(${TEST_MAIN} ${TESTFILES})
-target_link_libraries(${TEST_MAIN} PRIVATE ${LIBRARY_NAME} unity m)
+target_link_libraries(${TEST_MAIN} PRIVATE ${LIBRARY_NAME} chip_control unity m)
 set_target_properties(${TEST_MAIN} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 target_set_warnings(${TEST_MAIN} ENABLE ALL AS_ERROR ALL DISABLE Annoying) # Set warnings (if needed).
 
