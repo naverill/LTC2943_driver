@@ -1,0 +1,6 @@
+[submodule "extern/cpputest"]
+	path = extern/cpputest
+	url = https://github.com/cpputest/cpputest.git
+[submodule "external/Unity"]
+	path = external/Unity
+	url = https://github.com/ThrowTheSwitch/Unity.git

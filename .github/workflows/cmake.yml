@@ -9,7 +9,7 @@ on:
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
+  BUILD_TYPE: Debug 
 
 jobs:
   build:
@@ -22,21 +22,14 @@ jobs:
       matrix:
         config:
           - { os: ubuntu-20.04, CC: gcc-7, CXX: g++-7}
-          - { os: ubuntu-20.04, CC: clang-8, CXX: clang++-8}
-          - { os: ubuntu-20.04, CC: gcc-10, CXX: g++-10} 
-          - { os: ubuntu-20.04, CC: clang-12, CXX: clang++-12}
-          - { os: ubuntu-22.04, CC: clang-15, CXX: clang++-15}
-        deps:
-          - [libeigen3-dev libzmq3-dev build-essential libssl-dev]
+          - { os: ubuntu-20.04, CC: gcc-10, CXX: g++-10}
+          - { os: ubuntu-20.04, CC: clang-12, CXX: clang-12}
+          - { os: ubuntu-22.04, CC: clang-15, CXX: clang-15}
     steps:
-    - uses: actions/checkout@v3
-    
+    - uses: actions/checkout@v3 
     - name: Install compiler
-      run: |
-         if [ "$RUNNER_OS" == "Linux" ]; then
-          sudo apt update && sudo apt-get install ${{ matrix.config.CC }} ${{ matrix.config.CXX }}
-          sudo apt install -y ${{ matrix.deps }} 
-         fi
+      run: | 
+        sudo apt update && sudo apt install -y ${{ matrix.config.CC }} ${{ matrix.config.CXX }} libeigen3-dev libzmq3-dev build-essential libssl-dev && cd external && git submodule add https://github.com/ThrowTheSwitch/Unity.git
       shell: bash
 
     - name: Configure CMake

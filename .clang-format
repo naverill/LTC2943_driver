@@ -7,7 +7,7 @@ UseTab:          Always
 ColumnLimit: 110
 
 # Other languages JavaScript, Proto
-Language: Cpp
+Language: C
 
 # http://releases.llvm.org/6.0.1/tools/clang/docs/ClangFormatStyleOptions.html#disabling-formatting-on-a-piece-of-code
 # int formatted_code;
@@ -17,7 +17,7 @@ Language: Cpp
 # void formatted_code_again;
 
 DisableFormat:   false
-Standard: Cpp11
+Standard: C17
 
 AccessModifierOffset: -4
 AlignAfterOpenBracket: AlwaysBreak

@@ -1,7 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.14 FATAL_ERROR)
-PROJECT(LTC2943_driver VERSION 0.0.1 LANGUAGES C)
+PROJECT(LTC2943_Sim VERSION 0.0.1 LANGUAGES C)
 INCLUDE(CheckCCompilerFlag)
-INCLUDE(ExternalProject)
 
 # Define ${CMAKE_INSTALL_...} variables
 include(GNUInstallDirs)
@@ -26,5 +25,15 @@ ENDIF()
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-register -Wno-ignored-attributes")
 
-# Set default ExternalProject root directory
-SET_DIRECTORY_PROPERTIES(PROPERTIES EP_PREFIX .)
+set(TESTFILES        # All .cpp files in tests/
+    tests/main.c
+)
+# --------------------------------------------------------------------------------
+#                         Add CppUTest Dependency
+# --------------------------------------------------------------------------------
+add_library(unity STATIC external/Unity/src/unity.c)
+target_include_directories(unity PUBLIC external/Unity/src)
+ENABLE_TESTING()
+
+ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(src)
