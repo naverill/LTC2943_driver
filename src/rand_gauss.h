@@ -20,8 +20,14 @@ float rand_gauss(float mu, float sigma){
 
 
 float rand_gauss_range(float min, float max, float sigma){
-    float x = rand_gauss(0.f, sigma);
-    return -min + x * (max - min);
+    float x = rand_gauss(0.5, sigma);
+    if (x > 1){
+        x = 1; 
+    } 
+    else if (x < 0){
+        x = 0;
+    }
+    return min + x * (max - min);
 }  
 
 #endif // RAND_GAUSS_H

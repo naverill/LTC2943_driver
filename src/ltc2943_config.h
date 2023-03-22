@@ -9,6 +9,22 @@
 
 const uint8_t LTC2943_I2C_ADDR = BIT(6) | BIT(5) | BIT(2);
 const float RSENSE = 50; // default for sense resistor (mΩ)
+const float SCAN_WAIT = 10000;      // (ms)
+const float CHARGE_MIN = 0.;        // (mAh)
+const float CHARGE_MAX = 0xffff;    // (mAh) 
+const float CHARGE_ERR = 0.25;      // (%)
+const float VOLTAGE_MIN = 3300;     // (mV)
+const float VOLTAGE_MAX = 24000;    // (mV)
+const float VOLTAGE_ERR = 0.1;      // (%)
+const float CURR_MIN = 0;           // (mV)
+const float CURR_MAX = 60;          // (mV)
+const float CURR_ERR = 0.1;         // (%)
+const float TEMP_MIN = 273.15;      // (K)  
+const float TEMP_MAX = 343.15;      // (K) 
+const float TEMP_ERR = 3;           // (K) 
+const float UNDERVOLTAGE_LOCKOUT_MIN = 3500; // (mV)
+const uint32_t SCL_CLOCK_FREQ = 900;
+const uint32_t ADC_READ_WAIT = 100;
 
 typedef const uint8_t LTC2943_AdcMode_t;
 LTC2943_AdcMode_t AUTO    = BIT(1) | BIT(0);  // continuously performing voltage, current and 
@@ -69,38 +85,27 @@ LTC2943_AlertStatus_t CURRENT_ALERT           = BIT(6); // Indicates one of the 
 
 
 const bool LTC2943_REG_ADDR_WRITABLE[18] = {
-    0, //   STATUS              
-    1, //   CONTROL             
-    1, //   CHARGE_      
-    1, //   CHARGE_THR_HIGH_ 
-    1, //   CHARGE_THR_LOW_  
-    0, //   VOLTAGE_         
-    1, //   VOLTAGE_THR_HIGH_
-    1, //   VOLTAGE_THR_LOW_ 
-    0, //   CURR_            
-    1, //   CURR_THR_HIGH_   
-    1, //   CURR_THR_LOW_    
-    0, //   TEMP_            
-    1, //   TEMP_THR_HIGH       
-    1, //   TEMP_THR_LOW        
+    0, //   STATUS_ADDR              
+    1, //   CONTROL_ADDR             
+    1, //   CHARGE_ADDR      
+    1, //   CHARGE_THR_HIGH_ADDR 
+    1, //   CHARGE_THR_LOW_ADDR  
+    0, //   VOLTAGE_ADDR         
+    1, //   VOLTAGE_THR_HIGH_ADDR
+    1, //   VOLTAGE_THR_LOW_ADDR 
+    0, //   CURR_ADDR            
+    1, //   CURR_THR_HIGH_ADDR   
+    1, //   CURR_THR_LOW_ADDR    
+    0, //   TEMP_ADDR            
+    1, //   TEMP_THR_HIGH_ADDR       
+    1, //   TEMP_THR_LOW_ADDR        
 };
 
 struct LTC2943_Config_t {
-    float SUPPLY_VOLTAGE_MIN;
-    float SUPPLY_VOLTAGE_MAX;
-    float SCL_VOLTAGE_MIN;
-    float SCL_VOLTAGE_MAX;
-    float OPERATING_TEMP_RANGE_C_MIN; 
-    float OPERATING_TEMP_RANGE_C_MAX; 
-    float OPERATING_TEMP_RANGE_I_MIN; 
-    float OPERATING_TEMP_RANGE_I_MAX; 
-    float SURVIVAL_TEMP_RANGE_MIN;
-    float SURVIVAL_TEMP_RANGE_MAX;
-    uint32_t SCL_CLOCK_FREQ;
-    uint32_t ADC_READ_WAIT;
     uint8_t ADC_MODE;
     uint8_t ALCC_MODE;
     uint8_t PRESCALER_M; 
+    bool SHUTDOWN;
 };
 
 struct LTC2943_AlertThresholdConfig_t {
@@ -121,7 +126,7 @@ struct LTC2943_Status_t {
     bool CHARGE_HIGH;
     bool TEMP;
     bool ACC_CHARGE;
-    bool CURRENT_ALERT;
+    bool CURRENT;
 };
 
 #endif // LCT2943_CONFIG_H
