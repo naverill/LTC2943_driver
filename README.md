@@ -12,25 +12,16 @@ The module is tested and configured on:
 Install Linux dependencies
 ```
 sudo apt install build-essential libssl-dev g++         // C build requirements
-sudo apt install automake autoconf libtool              // test requirements
 ```
 
 # Build Test Suite
-Add a directory `extern` in the root directory and install CppuTest as a git submodule
+Add a directory `external` in the root directory and install Unity as a git submodule
 ```
-mkdir extern
-cd extern
-git submodule add https://github.com/cpputest/cpputest.git
+mkdir external
+cd external
+git submodule add https://github.com/ThrowTheSwitch/Unity.git 
 ```
 
-Build the unit test  module using autoconf
-```
-cd cpputest/build
-autoreconf .. -i
-../configure
-make
-```
- 
 # Build
 Build by making a build directory (i.e. build/), run cmake in that dir, and then use 
 make to build the desired target.
