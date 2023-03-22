@@ -5,47 +5,6 @@
 #include <stdbool.h>
 #include "ltc2943_config.h"
 
-struct LTC2943_Measurement_t {
-    float CHARGE;
-    float VOLTAGE;
-    float CURRENT;
-    float TEMP;
-};
-
-struct LTC2943_Status_t status = {
-    1,  // UNDERVOLTAGE_LOCKOUT 
-    0,  // VOLTAGE  
-    0,  // CHARGE_LOW 
-    0,  // CHARGE_HIGH 
-    0,  // TEMP 
-    0,  // CHARGE 
-    0   // CURRENT
-};
-
-struct LTC2943_Config_t config = {
-    SLEEP,      // ADC_MODE 
-    ALERT,      // ALCC_MODE 
-    _4096,      // PRESCALER_M  
-    false,      // SHUTDOWN
-};
-
-struct LTC2943_AlertThresholdConfig_t alert_thr = {
-    0xFFFF,   // CHARGE_HIGH
-    0x0,      // CHARGE_LOW
-    0xFFFF,   // VOLTAGE_HIGH  
-    0x0,      // VOLTAGE_LOW
-    0xFFFF,   // CURR_HIGH
-    0x0,      // CURR_LOW
-    0xFFFF,   // TEMP_HIGH
-    0x0,      // TEMP_LOW
-};
-
-struct LTC2943_Measurement_t meas = {
-    0x7fff, // CHARGE
-    3300,   // Power-up voltage (mV)
-    0,      // CURRENT
-    0,      // TEMPERATURE
-};
 const bool SIMULATE = false;
 
 bool LTC2943_Initialise();   // Initialise the driver

@@ -101,32 +101,4 @@ const bool LTC2943_REG_ADDR_WRITABLE[18] = {
     1, //   TEMP_THR_LOW_ADDR        
 };
 
-struct LTC2943_Config_t {
-    uint8_t ADC_MODE;
-    uint8_t ALCC_MODE;
-    uint8_t PRESCALER_M; 
-    bool SHUTDOWN;
-};
-
-struct LTC2943_AlertThresholdConfig_t {
-    float CHARGE_HIGH;
-    float CHARGE_LOW; 
-    float VOLTAGE_HIGH;
-    float VOLTAGE_LOW; 
-    float CURR_HIGH;
-    float CURR_LOW; 
-    float TEMP_HIGH;
-    float TEMP_LOW; 
-};
-
-struct LTC2943_Status_t {
-    bool UNDERVOLTAGE_LOCKOUT;
-    bool VOLTAGE;
-    bool CHARGE_LOW;
-    bool CHARGE_HIGH;
-    bool TEMP;
-    bool ACC_CHARGE;
-    bool CURRENT;
-};
-
 #endif // LCT2943_CONFIG_H

@@ -23,7 +23,77 @@
 #include <stdint.h>
 #include "ltc2943_sim.h"
 #include "rand_gauss.h"
+#include "ltc2943_config.h"
 
+struct LTC2943_Config_t {
+    uint8_t ADC_MODE;
+    uint8_t ALCC_MODE;
+    uint8_t PRESCALER_M; 
+    bool SHUTDOWN;
+};
+
+struct LTC2943_AlertThresholdConfig_t {
+    float CHARGE_HIGH;
+    float CHARGE_LOW; 
+    float VOLTAGE_HIGH;
+    float VOLTAGE_LOW; 
+    float CURR_HIGH;
+    float CURR_LOW; 
+    float TEMP_HIGH;
+    float TEMP_LOW; 
+};
+
+struct LTC2943_Status_t {
+    bool UNDERVOLTAGE_LOCKOUT;
+    bool VOLTAGE;
+    bool CHARGE_LOW;
+    bool CHARGE_HIGH;
+    bool TEMP;
+    bool ACC_CHARGE;
+    bool CURRENT;
+};
+
+struct LTC2943_Measurement_t {
+    float CHARGE;
+    float VOLTAGE;
+    float CURRENT;
+    float TEMP;
+};
+
+struct LTC2943_Status_t status = {
+    1,  // UNDERVOLTAGE_LOCKOUT 
+    0,  // VOLTAGE  
+    0,  // CHARGE_LOW 
+    0,  // CHARGE_HIGH 
+    0,  // TEMP 
+    0,  // CHARGE 
+    0   // CURRENT
+};
+
+struct LTC2943_Config_t config = {
+    SLEEP,      // ADC_MODE 
+    ALERT,      // ALCC_MODE 
+    _4096,      // PRESCALER_M  
+    false,      // SHUTDOWN
+};
+
+struct LTC2943_AlertThresholdConfig_t alert_thr = {
+    0xFFFF,   // CHARGE_HIGH
+    0x0,      // CHARGE_LOW
+    0xFFFF,   // VOLTAGE_HIGH  
+    0x0,      // VOLTAGE_LOW
+    0xFFFF,   // CURR_HIGH
+    0x0,      // CURR_LOW
+    0xFFFF,   // TEMP_HIGH
+    0x0,      // TEMP_LOW
+};
+
+struct LTC2943_Measurement_t meas = {
+    0x7fff, // CHARGE
+    3300,   // Power-up voltage (mV)
+    0,      // CURRENT
+    0,      // TEMPERATURE
+};
 static uint8_t read_register;
 
 void LTC2943_UintToBuff(uint32_t *data, uint8_t *write_buff, uint8_t size){
@@ -409,17 +479,4 @@ bool LTC2943_Write(uint8_t address, uint8_t *src, uint8_t dataSize){
         success = LTC2943_WriteRegister(reg_addr, data);
     }
     return success;
-}
-
-void LTC2943_Reset(){
-    LTC2943_Status_t status = (LTC2943_Status_t){
-        .UNDERVOLTAGE_LOCKOUT =   1,
-        .VOLTAGE =  0,
-        .CHARGE_LOW  = 0,
-        .CHARGE_HIGH =  0, 
-        .TEMP =  0,
-        .CHARGE = 0,
-        .CURRENT = 0
-    };
-
 }

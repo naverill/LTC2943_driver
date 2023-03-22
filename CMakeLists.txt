@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.14 FATAL_ERROR)
-PROJECT(LTC2943_driver VERSION 0.0.1 LANGUAGES C)
+PROJECT(LTC2943_Sim VERSION 0.0.1 LANGUAGES C)
 INCLUDE(CheckCCompilerFlag)
 INCLUDE(ExternalProject)
 
@@ -26,25 +26,16 @@ ENDIF()
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-deprecated-register -Wno-ignored-attributes")
 
+set(TESTFILES        # All .cpp files in tests/
+    tests/main.c
+)
 # --------------------------------------------------------------------------------
 #                         Add CppUTest Dependency
 # --------------------------------------------------------------------------------
-#ExternalProject_Add (
-#      cpputest 
-#      BUILD_IN_SOURCE 1
-#      GIT_REPOSITORY https://github.com/cpputest/cpputest.git 
-#      UPDATE_COMMAND ""
-#      INSTALL_COMMAND make install
-#      PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external/cpputest"
-#      BUILD_COMMAND "" 
-#)
-#add_library(cpputest STATIC IMPORTED)
-#set_target_properties(cpputest PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/external/cpputest/lib/cpputest.a)
-#include_directories(${CMAKE_CURRENT_BINARY_DIR}/external/libzmq/include)
-#include_directories(${CMAKE_CURRENT_BINARY_DIR}/external/cppzmq/src/cppzmq)
+add_library(unity STATIC external/Unity/src/unity.c)
+target_include_directories(unity PUBLIC external/Unity/src)
 
 add_executable(main src/main.c)
-# add_dependencies(main ${LIBRARY_NAME})
 target_link_libraries(main PRIVATE ${LIBRARY_NAME} m)
 set_target_properties(
     ${LIBRARY_NAME} main 
@@ -55,4 +46,5 @@ set_target_properties(
 )
 ENABLE_TESTING()
 
-ADD_SUBDIRECTORY(test EXCLUDE_FROM_ALL)
+ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(src)

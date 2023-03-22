@@ -1,5 +1,8 @@
-IMPORT_TEST_GROUP(LTC2943);
+#include <unity.h>
+#include "unittests.c"
 
-int main(int argc, char *argv[]) {
-  return RUN_ALL_TESTS(argc, argv);
+int main(void) {
+    UNITY_BEGIN();
+    RUN_TEST(Test_GetAdcMode);
+    return UNITY_END();
 }

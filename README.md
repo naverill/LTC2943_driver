@@ -39,8 +39,8 @@ make to build the desired target.
 > mkdir build && cd build
 > cmake .. -DCMAKE_BUILD_TYPE=[Debug | Coverage | Release]
 > make
+> make test
 > ./main # Run simulator
-> ./test # Run unit tests 
 ```
 
 # Device APIs
