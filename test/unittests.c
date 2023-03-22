@@ -1,5 +1,7 @@
 #include <unity.h>
 #include "chip_control.h"
+#include "ltc2943_sim.h"
+
 
 void setUp(){}
 void tearDown(){

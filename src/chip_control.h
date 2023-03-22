@@ -105,4 +105,50 @@ bool ChipControl_SetTemperatureThresholdLow(float value);
  */
 bool ChipControl_SetTemperatureThresholdHigh(float value);
 
+/**
+ * 
+ */
+float ChipControl_GetChargeThresholdHigh();
+
+/**
+ * 
+ */
+bool ChipControl_SetChargeThresholdLow(float value);
+
+
+/**
+ * 
+ */
+float ChipControl_GetVoltageThresholdLow();
+
+/**
+ * 
+ */
+float ChipControl_GetVoltageThresholdHigh();
+
+/**
+ * 
+ */
+float ChipControl_GetCurrentThresholdLow();
+
+/**
+ * 
+ */
+float ChipControl_GetCurrentThresholdHigh();
+
+/**
+ * 
+ */
+float ChipControl_GetTemperatureThresholdLow();
+
+/**
+ * 
+ */
+float ChipControl_GetTemperatureThresholdHigh();
+
+/**
+ * 
+ */
+float ChipControl_GetChargeThresholdLow();
+
 #endif // CHIP_CONTROL_H
