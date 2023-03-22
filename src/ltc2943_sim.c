@@ -24,6 +24,7 @@
 #include "ltc2943_sim.h"
 #include "rand_gauss.h"
 
+static uint8_t read_register;
 
 void LTC2943_UintToBuff(uint32_t *data, uint8_t *write_buff, uint8_t size){
     uint8_t i;
@@ -39,11 +40,21 @@ void LTC2943_BuffToUint(uint32_t *data, uint8_t *read_buff, uint8_t size){
     }
 }
 
+/**
+ *  Convert reading from registers (U, V, W, X) to charge (mAh), where
+ *  
+ *  q = 0.34 * (50 / RSENSE) * (prescalerM / 4096) 
+ *  (sourced from datasheet)
+ */
 float LTC2943_RegisterToCharge(uint16_t reg){
     return (float) reg/ (0.34 * 50 / RSENSE) * (config.PRESCALER_M / 4096);
 }
 
 
+/**
+ *  Convert temperature (K) to register input  
+ *  (sourced from datasheet)
+ */
 uint16_t LTC2943_ChargeToRegister(float value){
      uint32_t reg = value * (0.34 * 50 / RSENSE) * (config.PRESCALER_M / 4096); 
      if (reg > 0xffff){
@@ -55,11 +66,20 @@ uint16_t LTC2943_ChargeToRegister(float value){
 }
 
 
+/**
+ *  Convert reading from registers (I, J, K, L, M) to voltage (mV), where
+ *  Vsense = 23.6V * (RESULT / 65536)
+ *  (sourced from datasheet)
+ */
 static float LTC2943_RegisterToVoltage(uint16_t reg){
     return 23600 * ((float) reg / 0xfff);
 }
 
 
+/**
+ *  Convert voltage (mV) to reading for registers (I, J, K, L, M), where 
+ *  Vsense = (RESULT * 65536) / 23.6V
+ */
 static uint16_t LTC2943_VoltageToRegister(float value){
      uint32_t reg = (value * 0xfff) / 23600;
      if (reg > 0xfff){
@@ -71,11 +91,21 @@ static uint16_t LTC2943_VoltageToRegister(float value){
 }
 
 
+/**
+ *  Convert reading from registers (O, P, Q, R, S, T) to current (mA), where
+ *  RSENSE = 50mΩ
+ *  
+ *  I-bat = (60mV / RSENSE ) * (value - 7FFFh) / 7FFFhi (mA)
+ *  (sourced from datasheet)
+ */
 static float LTC2943_RegisterToCurrent(uint16_t reg){
     return (float) (60000 / RSENSE) * ((reg - 0x7fff) / 0x7fff);
 }
 
 
+/**
+ *  Convert current to register input
+ */
 static uint16_t LTC2943_CurrentToRegister(float value){
      uint32_t reg = (value * RSENSE * 0x7fff / 60000) + 0x7fff; 
      if (reg > 0xffff){
@@ -87,11 +117,21 @@ static uint16_t LTC2943_CurrentToRegister(float value){
 }
 
 
+/**
+ *  Convert reading from registers (U, V, W, X) to temperature (K), where
+ *  
+ *  T = 510K * (value / 0xfff) 
+ *  (sourced from datasheet)
+ */
 static float LTC2943_RegisterToTemperature(uint16_t reg){
     return (float) (reg / 0xffff) * 510;
 }
 
 
+/**
+ *  Convert temperature (K) to register input  
+ *  (sourced from datasheet)
+ */
 static uint16_t LTC2943_TemperatureToRegister(float value){
      uint32_t reg = (value * 0xffff) / 510; 
      if (reg > 0xffff){
@@ -103,42 +143,66 @@ static uint16_t LTC2943_TemperatureToRegister(float value){
 }
 
 
+/** Extract the current ADC mode from the control register
+ *  This value is located in bits [7:6]
+ */
 LTC2943_AdcMode_t LTC2943_ReadAdcMode(uint8_t reg){
     return (LTC2943_AdcMode_t)(reg >> 6);
 }
 
+/** Set the ADC mode in the control register
+ *  This value is located in bits [7:6]
+ */
 uint8_t LTC2943_WriteAdcMode(uint8_t reg, LTC2943_AdcMode_t mode){
     uint8_t bit_mask = ~(BIT(7) || BIT(6));
     return (reg & bit_mask) | ((uint8_t)mode << 6);
 }
 
-uint8_t LTC2943_WriteAlccMode(uint8_t reg, LTC2943_AlccMode_t mode){
-    uint8_t bit_mask = ~(BIT(5) || BIT(4) || BIT(3)); 
-    return (reg & bit_mask) | (((uint8_t)mode << 3));
-}
-
+/** Extract the current ALCC mode from the control register
+ *  This value is located in bits [5:3]
+ */
 LTC2943_AlccMode_t LTC2943_ReadAlccMode(uint8_t reg){
     uint8_t bit_mask = (BIT(5) | BIT(4) | BIT(3)); 
     uint8_t mode = (reg & bit_mask) >> 3;
     return (LTC2943_AlccMode_t) mode; 
 }
 
-LTC2943_AdcMode_t LTC2943_WritePrescalerM(uint8_t reg, LTC2943_PrescalerM_t nbit){
-    uint8_t bit_mask = ~(BIT(2) || BIT(1)); 
-    return (reg & bit_mask) | (((uint8_t)nbit << 1));
+/** Set the ALCC mode in the control register
+ *  This value is located in bits [5:3]
+ */
+uint8_t LTC2943_WriteAlccMode(uint8_t reg, LTC2943_AlccMode_t mode){
+    uint8_t bit_mask = ~(BIT(5) || BIT(4) || BIT(3)); 
+    return (reg & bit_mask) | (((uint8_t)mode << 3));
 }
 
+/** Extract the current PrescalerM from the control register
+ *  This value is located in bits [2:1]
+ */
 LTC2943_PrescalerM_t LTC2943_ReadPrescalerM(uint8_t reg){
     uint8_t bit_mask = (BIT(2) | BIT(1)); 
     uint8_t nbit = (reg & bit_mask) >> 1;
     return (LTC2943_PrescalerM_t) nbit; 
 }
 
+/** Set the PrescalerM in the control register
+ *  This value is located in bits [2:1]
+ */
+LTC2943_AdcMode_t LTC2943_WritePrescalerM(uint8_t reg, LTC2943_PrescalerM_t nbit){
+    uint8_t bit_mask = ~(BIT(2) || BIT(1)); 
+    return (reg & bit_mask) | (((uint8_t)nbit << 1));
+}
+
+/** Set the Shutdown status from the control register
+ *  This value is located in bit [0]
+ */
 bool LTC2943_ReadShutdown(uint8_t reg){
     uint8_t bit_mask = BIT(0); 
     return (bool)(reg & bit_mask);
 }
 
+/** Set the current shutdown status from the control register
+ *  This value is located in bit [0]
+ */
 bool LTC2943_WriteShutdown(uint8_t reg, bool shutdown){
     uint8_t bit_mask = ~BIT(0); 
     return (reg & bit_mask) | ((uint8_t) shutdown);
@@ -320,7 +384,7 @@ bool LTC2943_Read(uint8_t address, uint8_t *dest, uint8_t dataSize){
      *
      */
     bool success = false;
-    success = LTC2943_Read_Register(read_register, dest);
+    success = LTC2943_ReadRegister(read_register, dest, dataSize);
     LTC2943_Simulate();
     return success;
 }

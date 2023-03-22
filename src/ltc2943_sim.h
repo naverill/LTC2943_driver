@@ -47,8 +47,6 @@ struct LTC2943_Measurement_t meas = {
     0,      // TEMPERATURE
 };
 
-static uint8_t read_register;
-
 bool LTC2943_Initialise();   // Initialise the driver
 bool LTC2943_Read(uint8_t address, uint8_t *dest, uint8_t dataSize); // Read data from the chip @address to dest
 bool LTC2943_Write(uint8_t address, uint8_t *src, uint8_t dataSize); // Write data from src to the chip @address
