@@ -1,7 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.14 FATAL_ERROR)
 PROJECT(LTC2943_Sim VERSION 0.0.1 LANGUAGES C)
 INCLUDE(CheckCCompilerFlag)
-INCLUDE(ExternalProject)
 
 # Define ${CMAKE_INSTALL_...} variables
 include(GNUInstallDirs)
@@ -34,16 +33,6 @@ set(TESTFILES        # All .cpp files in tests/
 # --------------------------------------------------------------------------------
 add_library(unity STATIC external/Unity/src/unity.c)
 target_include_directories(unity PUBLIC external/Unity/src)
-
-add_executable(main src/main.c)
-target_link_libraries(main PRIVATE ${LIBRARY_NAME} m)
-set_target_properties(
-    ${LIBRARY_NAME} main 
-      PROPERTIES
-        C_STANDARD 17
-        C_STANDARD_REQUIRED YES
-        C_EXTENSIONS NO
-)
 ENABLE_TESTING()
 
 ADD_SUBDIRECTORY(test)

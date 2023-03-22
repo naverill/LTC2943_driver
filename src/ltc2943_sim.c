@@ -23,42 +23,7 @@
 #include <stdint.h>
 #include "ltc2943_sim.h"
 #include "rand_gauss.h"
-#include "ltc2943_config.h"
 
-struct LTC2943_Config_t {
-    uint8_t ADC_MODE;
-    uint8_t ALCC_MODE;
-    uint8_t PRESCALER_M; 
-    bool SHUTDOWN;
-};
-
-struct LTC2943_AlertThresholdConfig_t {
-    float CHARGE_HIGH;
-    float CHARGE_LOW; 
-    float VOLTAGE_HIGH;
-    float VOLTAGE_LOW; 
-    float CURR_HIGH;
-    float CURR_LOW; 
-    float TEMP_HIGH;
-    float TEMP_LOW; 
-};
-
-struct LTC2943_Status_t {
-    bool UNDERVOLTAGE_LOCKOUT;
-    bool VOLTAGE;
-    bool CHARGE_LOW;
-    bool CHARGE_HIGH;
-    bool TEMP;
-    bool ACC_CHARGE;
-    bool CURRENT;
-};
-
-struct LTC2943_Measurement_t {
-    float CHARGE;
-    float VOLTAGE;
-    float CURRENT;
-    float TEMP;
-};
 
 struct LTC2943_Status_t status = {
     1,  // UNDERVOLTAGE_LOCKOUT 
@@ -70,31 +35,31 @@ struct LTC2943_Status_t status = {
     0   // CURRENT
 };
 
-struct LTC2943_Config_t config = {
-    SLEEP,      // ADC_MODE 
-    ALERT,      // ALCC_MODE 
-    _4096,      // PRESCALER_M  
-    false,      // SHUTDOWN
-};
-
-struct LTC2943_AlertThresholdConfig_t alert_thr = {
-    0xFFFF,   // CHARGE_HIGH
-    0x0,      // CHARGE_LOW
-    0xFFFF,   // VOLTAGE_HIGH  
-    0x0,      // VOLTAGE_LOW
-    0xFFFF,   // CURR_HIGH
-    0x0,      // CURR_LOW
-    0xFFFF,   // TEMP_HIGH
-    0x0,      // TEMP_LOW
-};
-
-struct LTC2943_Measurement_t meas = {
-    0x7fff, // CHARGE
-    3300,   // Power-up voltage (mV)
-    0,      // CURRENT
-    0,      // TEMPERATURE
-};
+struct LTC2943_Config_t config;
 static uint8_t read_register;
+struct LTC2943_AlertThresholdConfig_t alert_thr;
+struct LTC2943_Measurement_t meas;
+
+void LTC2943_Reset(){
+    config.ADC_MODE     = SLEEP;
+    config.ALCC_MODE    = ALERT;
+    config.PRESCALER_M  = _4096;
+    config.SHUTDOWN     = false;
+
+    alert_thr.CHARGE_HIGH   = 0xFFFF;
+    alert_thr.CHARGE_LOW    = 0x0;   
+    alert_thr.VOLTAGE_HIGH  = 0xFFFF;
+    alert_thr.VOLTAGE_LOW   = 0x0;  
+    alert_thr.CURR_HIGH     = 0xFFFF;
+    alert_thr.CURR_LOW      = 0x0;   
+    alert_thr.TEMP_HIGH     = 0xFFFF;
+    alert_thr.TEMP_LOW      = 0x0;   
+                                      
+    meas.CHARGE     = 0x7fff;
+    meas.VOLTAGE    = 3300;   // Power-up voltage (mV)
+    meas.CURRENT    = 0;
+    meas.TEMP       = 0;
+}
 
 void LTC2943_UintToBuff(uint32_t *data, uint8_t *write_buff, uint8_t size){
     uint8_t i;
@@ -429,6 +394,7 @@ bool LTC2943_Initialise(){
      *      2. Setting all registers to default state
      *      3. Enabling alert mode
      */
+    LTC2943_Reset();
     return 0;
 }
 

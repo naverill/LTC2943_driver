@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <stddef.h>
 #include "ltc2943_config.h"
 
 /**

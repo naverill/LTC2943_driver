@@ -7,6 +7,41 @@
 
 const bool SIMULATE = false;
 
+struct LTC2943_Config_t {
+    uint8_t ADC_MODE;
+    uint8_t ALCC_MODE;
+    uint8_t PRESCALER_M; 
+    bool SHUTDOWN;
+};
+
+struct LTC2943_AlertThresholdConfig_t {
+    float CHARGE_HIGH;
+    float CHARGE_LOW; 
+    float VOLTAGE_HIGH;
+    float VOLTAGE_LOW; 
+    float CURR_HIGH;
+    float CURR_LOW; 
+    float TEMP_HIGH;
+    float TEMP_LOW; 
+};
+
+struct LTC2943_Status_t {
+    bool UNDERVOLTAGE_LOCKOUT;
+    bool VOLTAGE;
+    bool CHARGE_LOW;
+    bool CHARGE_HIGH;
+    bool TEMP;
+    bool ACC_CHARGE;
+    bool CURRENT;
+};
+
+struct LTC2943_Measurement_t {
+    float CHARGE;
+    float VOLTAGE;
+    float CURRENT;
+    float TEMP;
+};
+
 bool LTC2943_Initialise();   // Initialise the driver
 bool LTC2943_Read(uint8_t address, uint8_t *dest, uint8_t dataSize); // Read data from the chip @address to dest
 bool LTC2943_Write(uint8_t address, uint8_t *src, uint8_t dataSize); // Write data from src to the chip @address
@@ -30,5 +65,6 @@ LTC2943_PrescalerM_t LTC2943_ReadPrescalerM(uint8_t reg);
 LTC2943_AdcMode_t LTC2943_WritePrescalerM(uint8_t reg, LTC2943_PrescalerM_t nbit);
 bool LTC2943_ReadShutdown(uint8_t reg);
 bool LTC2943_WriteShutdown(uint8_t reg, bool shutdown);
+void LTC2943_Reset();
 
 #endif // LTC2943_SIM_H

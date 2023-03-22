@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.14)
 
 set(TESTFILES
     main.c
-    unittests.c
 )
 
 set(TEST_MAIN unit_tests)
@@ -12,7 +11,6 @@ set(TEST_RUNNER_PARAMS "")
 # --------------------------------------------------------------------------------
 #                         Make Tests
 # --------------------------------------------------------------------------------
-include_directories(${PROJECT_SOURCE_DIR}/../src)
 add_executable(${TEST_MAIN} ${TESTFILES})
 target_link_libraries(${TEST_MAIN} PRIVATE ${LIBRARY_NAME} chip_control unity m)
 set_target_properties(${TEST_MAIN} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})

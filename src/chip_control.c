@@ -3,9 +3,8 @@
  */
 #include <string.h>
 #include <stdint.h>
-#include "ltc2943_sim.c"
 #include "chip_control.h"
-
+#include "ltc2943_sim.h"
 
 /** Check if an alert bit has been set in the status register 
  */
