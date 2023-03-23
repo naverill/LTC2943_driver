@@ -6,6 +6,9 @@
 #include "ltc2943_config.h"
 
 const bool SIMULATE = false;
+const uint64_t THR_MAX = 0xFFFF;
+const uint64_t THR_MIN = 0x0;
+const uint64_t THR_MID = THR_MIN + (THR_MAX - THR_MIN) / 2; 
 
 struct LTC2943_Config_t {
     uint8_t ADC_MODE;

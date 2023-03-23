@@ -46,16 +46,16 @@ void LTC2943_Reset(){
     config.PRESCALER_M  = _4096;
     config.SHUTDOWN     = false;
 
-    alert_thr.CHARGE_HIGH   = 0xFFFF;
-    alert_thr.CHARGE_LOW    = 0x0;   
-    alert_thr.VOLTAGE_HIGH  = 0xFFFF;
-    alert_thr.VOLTAGE_LOW   = 0x0;  
-    alert_thr.CURR_HIGH     = 0xFFFF;
-    alert_thr.CURR_LOW      = 0x0;   
-    alert_thr.TEMP_HIGH     = 0xFFFF;
-    alert_thr.TEMP_LOW      = 0x0;   
+    alert_thr.CHARGE_HIGH   = THR_MAX;
+    alert_thr.CHARGE_LOW    = THR_MIN;   
+    alert_thr.VOLTAGE_HIGH  = THR_MAX;
+    alert_thr.VOLTAGE_LOW   = THR_MIN;  
+    alert_thr.CURR_HIGH     = THR_MAX;
+    alert_thr.CURR_LOW      = THR_MIN;   
+    alert_thr.TEMP_HIGH     = THR_MAX;
+    alert_thr.TEMP_LOW      = THR_MIN;   
                                       
-    meas.CHARGE     = 0x7fff;
+    meas.CHARGE     = THR_MID;
     meas.VOLTAGE    = 3300;   // Power-up voltage (mV)
     meas.CURRENT    = 0;
     meas.TEMP       = 0;
@@ -92,10 +92,10 @@ float LTC2943_RegisterToCharge(uint16_t reg){
  */
 uint16_t LTC2943_ChargeToRegister(float value){
      uint32_t reg = value * (0.34 * 50 / RSENSE) * (config.PRESCALER_M / 4096); 
-     if (reg > 0xffff){
-         reg = 0xffff;
-     } else if (reg < 0){
-        reg = 0;
+     if (reg > THR_MAX){
+         reg = THR_MIN;
+     } else if (reg < THR_MIN){
+        reg = THR_MIN;
      }
      return  (uint16_t) reg;
 }
@@ -107,7 +107,7 @@ uint16_t LTC2943_ChargeToRegister(float value){
  *  (sourced from datasheet)
  */
 float LTC2943_RegisterToVoltage(uint16_t reg){
-    return 23600 * ((float) reg / 0xfff);
+    return 23600 * ((float) reg / THR_MAX);
 }
 
 
@@ -116,11 +116,11 @@ float LTC2943_RegisterToVoltage(uint16_t reg){
  *  Vsense = (RESULT * 65536) / 23.6V
  */
 uint16_t LTC2943_VoltageToRegister(float value){
-     uint32_t reg = (value * 0xfff) / 23600;
-     if (reg > 0xfff){
-        reg = 0xfff;
-     } else if (reg < 0){
-        reg = 0;
+     uint32_t reg = (value * THR_MAX) / 23600;
+     if (reg > THR_MIN){
+        reg = THR_MAX;
+     } else if (reg < THR_MIN){
+        reg = THR_MIN;
      }
      return  (uint16_t) reg;
 }
@@ -134,7 +134,7 @@ uint16_t LTC2943_VoltageToRegister(float value){
  *  (sourced from datasheet)
  */
 float LTC2943_RegisterToCurrent(uint16_t reg){
-    return (float) (60000 / RSENSE) * ((reg - 0x7fff) / 0x7fff);
+    return (float) (60000 / RSENSE) * ((reg - THR_MID) / THR_MID);
 }
 
 
@@ -142,11 +142,11 @@ float LTC2943_RegisterToCurrent(uint16_t reg){
  *  Convert current to register input
  */
 uint16_t LTC2943_CurrentToRegister(float value){
-     uint32_t reg = (value * RSENSE * 0x7fff / 60000) + 0x7fff; 
-     if (reg > 0xffff){
-        reg = 0xffff;
-     } else if (reg < 0){
-        reg = 0;
+     uint32_t reg = (value * RSENSE * THR_MID / 60000) + THR_MID; 
+     if (reg > THR_MAX){
+        reg = THR_MAX;
+     } else if (reg < THR_MIN){
+        reg = THR_MIN;
      }
      return (uint16_t) reg;
 }
@@ -159,7 +159,7 @@ uint16_t LTC2943_CurrentToRegister(float value){
  *  (sourced from datasheet)
  */
 float LTC2943_RegisterToTemperature(uint16_t reg){
-    return (float) (reg / 0xffff) * 510;
+    return (float) (reg / THR_MAX) * 510;
 }
 
 
@@ -168,11 +168,11 @@ float LTC2943_RegisterToTemperature(uint16_t reg){
  *  (sourced from datasheet)
  */
 uint16_t LTC2943_TemperatureToRegister(float value){
-     uint32_t reg = (value * 0xffff) / 510; 
-     if (reg > 0xffff){
-         reg = 0xffff;
-     } else if (reg < 0){
-        reg = 0;
+     uint32_t reg = (value * THR_MAX) / 510; 
+     if (reg > THR_MAX){
+         reg = THR_MAX;
+     } else if (reg < THR_MIN){
+        reg = THR_MIN;
      }
      return  (uint16_t) reg;
 }
