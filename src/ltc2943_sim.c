@@ -93,7 +93,7 @@ float LTC2943_RegisterToCharge(uint16_t reg){
 uint16_t LTC2943_ChargeToRegister(float value){
      uint32_t reg = value * (0.34 * 50 / RSENSE) * (config.PRESCALER_M / 4096); 
      if (reg > THR_MAX){
-         reg = THR_MIN;
+         reg = THR_MAX;
      } else if (reg < THR_MIN){
         reg = THR_MIN;
      }
@@ -117,7 +117,7 @@ float LTC2943_RegisterToVoltage(uint16_t reg){
  */
 uint16_t LTC2943_VoltageToRegister(float value){
      uint32_t reg = (value * THR_MAX) / 23600;
-     if (reg > THR_MIN){
+     if (reg > THR_MAX){
         reg = THR_MAX;
      } else if (reg < THR_MIN){
         reg = THR_MIN;
