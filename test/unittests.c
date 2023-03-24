@@ -1,5 +1,7 @@
 #include <unity.h>
 #include "chip_control.h"
+#include "ltc2943_sim.h"
+
 
 void setUp(){}
 void tearDown(){
@@ -196,4 +198,10 @@ void Test_SetTempThrLow(){
     float value = ChipControl_GetTemperatureThresholdLow();
     TEST_ASSERT_EQUAL_FLOAT(value, charge);
     LTC2943_Reset();
+}
+
+int main(void) {
+    UNITY_BEGIN();
+    RUN_TEST(Test_GetAdcMode);
+    return UNITY_END();
 }

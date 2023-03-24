@@ -6,6 +6,7 @@
 #include "chip_control.h"
 #include "ltc2943_sim.h"
 
+
 /** Check if an alert bit has been set in the status register 
  */
 static bool ChipControl_CheckAlert(uint8_t reg, LTC2943_AlertStatus_t alert){
@@ -19,8 +20,8 @@ static bool ChipControl_CheckAlert(uint8_t reg, LTC2943_AlertStatus_t alert){
  */
 static bool ChipControl_ReadRegister(uint8_t reg_addr, uint8_t *read_buff, uint8_t data_size){
     bool success = false;
-    if (LTC2943_Write(LTC2943_I2C_ADDR, &reg_addr, 1) == 0){
-        if (LTC2943_Read(LTC2943_I2C_ADDR, read_buff, data_size) == 0){
+    if (LTC2943_Write(LTC2943_I2C_ADDR, &reg_addr, 1)){
+        if (LTC2943_Read(LTC2943_I2C_ADDR, read_buff, data_size)){
             success = true;
         }
     }
@@ -37,8 +38,8 @@ static bool ChipControl_WriteRegister(uint8_t reg_addr, uint8_t *data_buff, uint
     write_buff[0] = reg_addr;
     memcpy((void *)(write_buff + 1), data_buff, data_size);
 
-    if (LTC2943_REG_ADDR_WRITABLE[reg_addr] == 1){ 
-       if (LTC2943_Write(LTC2943_I2C_ADDR, write_buff, buff_size) == 0){
+    if (LTC2943_REG_ADDR_WRITABLE[reg_addr]){ 
+       if (LTC2943_Write(LTC2943_I2C_ADDR, write_buff, buff_size)){
             success = true;
        } 
     }
